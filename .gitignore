@@ -1,0 +1,75 @@
+
+# ==============================
+# Frontend (Node.js / Vite)
+# ==============================
+
+node_modules/
+dist/
+dist-ssr/
+build/
+coverage/
+.vite/
+*.tsbuildinfo
+*.local
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================
+# Python / Scientific Computing
+# ==============================
+
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+*.egg-info/
+.eggs/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# ==============================
+# Environment Variables
+# ==============================
+
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# ==============================
+# Temporary Files
+# ==============================
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.log
+
+# ==============================
+# Editor / Operating System
+# ==============================
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
