@@ -1,0 +1,26 @@
+{
+  "azimuth_0.025_vs_0.05": {
+    "n": 7200,
+    "max_abs_deg": 0.0051,
+    "p99_abs_deg": 0.0013,
+    "p95_abs_deg": 0.0006,
+    "mean_abs_deg": 0.00015,
+    "frac_above_0.01_deg": 0.0,
+    "az_of_max_deg": 103.175,
+    "seconds": 51
+  },
+  "distance_half_steps": {
+    "samples_per_azimuth": 28933,
+    "max_abs_deg": 0.0013,
+    "p99_abs_deg": 0.0006,
+    "mean_abs_deg": 3e-05,
+    "frac_above_0.01_deg": 0.0,
+    "az_of_max_deg": 301.1,
+    "seconds": 101
+  },
+  "smooth_sphere": {
+    "expected_deg": -0.06144,
+    "got_min_deg": -0.06144,
+    "got_max_deg": -0.06144
+  }
+}
