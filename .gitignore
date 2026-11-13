@@ -64,6 +64,12 @@ htmlcov/
 *.swo
 *.log
 
+# Downloaded large SPICE kernels; the small leap-second kernel is versioned.
+data/kernels/*.bsp
+data/kernels/*.bpc
+data/kernels/*.part
+frontend/public/data/
+
 # ==============================
 # Editor / Operating System
 # ==============================

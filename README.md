@@ -31,6 +31,26 @@ Lunar Landing Site Navigator helps users explore and compare potential landing s
 └── docs/           # Documentation and references
 ```
 
+## Scientific pipeline
+
+The local scientific module now loads the four supplied site ephemerides,
+validates horizon-v2 handoffs, exports JSON, and searches landing dates under
+mission constraints. Terrain-aware results require the four original horizon
+profiles; body positions and historical aggregates can be generated before they
+arrive. The frontend directory currently contains the TypeScript data contract.
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m scientific build --mission data/mission.example.json
+.venv/bin/python -m scientific sync-frontend
+```
+
+See [scientific integration and validation](docs/scientific-integration.md),
+[team architecture and contributor boundaries](docs/team-architecture.md),
+[the frontend JSON contract](docs/data-contract.md), and the preserved
+[mathematical foundations](scientific/README.md).
+
 ## Team
 
 **Outliers** — NASA Space Apps Challenge 2026
