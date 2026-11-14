@@ -1,0 +1,159 @@
+{
+  "Site01": {
+    "A_2009-07-01_4yr_hourly": {
+      "any_part": 0.8778804471822952,
+      "mean_frac": 0.8276290506524061,
+      "centre": 0.8301106548026466,
+      "ge_80pct_disc": 0.7989961213780515,
+      "sun_el_min_max_deg": [
+        -2.093,
+        2.071
+      ]
+    },
+    "B_2009-07-01_18.6yr_hourly": {
+      "any_part": 0.873420281683235,
+      "mean_frac": 0.823038437821807,
+      "centre": 0.8255476152535517,
+      "ge_80pct_disc": 0.7944006570157267,
+      "sun_el_min_max_deg": [
+        -2.129,
+        2.106
+      ]
+    },
+    "C_1995-01-01_18.6yr_hourly": {
+      "any_part": 0.8682291219769309,
+      "mean_frac": 0.8163200880825275,
+      "centre": 0.81872617398659,
+      "ge_80pct_disc": 0.7868192348708646,
+      "sun_el_min_max_deg": [
+        -2.131,
+        2.109
+      ]
+    },
+    "nasa_pixel": 0.68484,
+    "nasa_bilinear": 0.6714731431850862,
+    "nasa_5x5_min_max": [
+      0.0,
+      0.8642000000000001
+    ],
+    "umar_any_part_5min_2009_2013": 0.8776
+  },
+  "Site04": {
+    "A_2009-07-01_4yr_hourly": {
+      "any_part": 0.7859057723020763,
+      "mean_frac": 0.7326660246287338,
+      "centre": 0.7346566278804472,
+      "ge_80pct_disc": 0.7046828656171572,
+      "sun_el_min_max_deg": [
+        -1.776,
+        1.76
+      ]
+    },
+    "B_2009-07-01_18.6yr_hourly": {
+      "any_part": 0.783626089408073,
+      "mean_frac": 0.7302212199170641,
+      "centre": 0.7321925448327429,
+      "ge_80pct_disc": 0.702210073423959,
+      "sun_el_min_max_deg": [
+        -1.823,
+        1.803
+      ]
+    },
+    "C_1995-01-01_18.6yr_hourly": {
+      "any_part": 0.7784165430676261,
+      "mean_frac": 0.7240901623078245,
+      "centre": 0.7261065689314914,
+      "ge_80pct_disc": 0.695688947181329,
+      "sun_el_min_max_deg": [
+        -1.823,
+        1.806
+      ]
+    },
+    "nasa_pixel": 0.6722800000000001,
+    "nasa_bilinear": 0.667576612080209,
+    "nasa_5x5_min_max": [
+      0.0,
+      0.8163600000000001
+    ],
+    "umar_any_part_5min_2009_2013": 0.7852
+  },
+  "Site07": {
+    "A_2009-07-01_4yr_hourly": {
+      "any_part": 0.8215263518138262,
+      "mean_frac": 0.7852440900703392,
+      "centre": 0.7852213096052931,
+      "ge_80pct_disc": 0.7667122975131189,
+      "sun_el_min_max_deg": [
+        -2.741,
+        2.736
+      ]
+    },
+    "B_2009-07-01_18.6yr_hourly": {
+      "any_part": 0.8185239210110197,
+      "mean_frac": 0.7829390277228326,
+      "centre": 0.7829641705789339,
+      "ge_80pct_disc": 0.7647859182897979,
+      "sun_el_min_max_deg": [
+        -2.762,
+        2.749
+      ]
+    },
+    "C_1995-01-01_18.6yr_hourly": {
+      "any_part": 0.8131550238413356,
+      "mean_frac": 0.7774971792346096,
+      "centre": 0.777546242384869,
+      "ge_80pct_disc": 0.7593128301933049,
+      "sun_el_min_max_deg": [
+        -2.762,
+        2.747
+      ]
+    },
+    "nasa_pixel": 0.8595600000000001,
+    "nasa_bilinear": 0.8366179803705643,
+    "nasa_5x5_min_max": [
+      0.17020000000000002,
+      0.8595600000000001
+    ],
+    "umar_any_part_5min_2009_2013": 0.8209
+  },
+  "Site11": {
+    "A_2009-07-01_4yr_hourly": {
+      "any_part": 0.8510723248916268,
+      "mean_frac": 0.8145231126916352,
+      "centre": 0.8151665525895505,
+      "ge_80pct_disc": 0.7955167693360712,
+      "sun_el_min_max_deg": [
+        -2.89,
+        2.888
+      ]
+    },
+    "B_2009-07-01_18.6yr_hourly": {
+      "any_part": 0.8470293328103358,
+      "mean_frac": 0.8109389144383291,
+      "centre": 0.8114940978904401,
+      "ge_80pct_disc": 0.7922187764307865,
+      "sun_el_min_max_deg": [
+        -2.89,
+        2.894
+      ]
+    },
+    "C_1995-01-01_18.6yr_hourly": {
+      "any_part": 0.8413846361285103,
+      "mean_frac": 0.804883845265715,
+      "centre": 0.8055306995501403,
+      "ge_80pct_disc": 0.7858753876515365,
+      "sun_el_min_max_deg": [
+        -2.891,
+        2.895
+      ]
+    },
+    "nasa_pixel": 0.7024,
+    "nasa_bilinear": 0.7224041978726197,
+    "nasa_5x5_min_max": [
+      0.38324,
+      0.8269200000000001
+    ],
+    "umar_any_part_5min_2009_2013": 0.8506
+  },
+  "_note": "Real SPICE (DE421, MOON_ME_DE421, CN+S) + our horizon profiles, terrain only, hourly. NASA map AVGVISIB_85S_060M_201608 = hourly average over ~18.6 yr, any part of the disc (.LBL), from the 60 m LDEM_85S_060M. Disc cut by a horizontal line at the horizon elevation at the centre azimuth."
+}

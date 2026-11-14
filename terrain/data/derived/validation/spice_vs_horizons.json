@@ -1,0 +1,414 @@
+{
+  "Site01": [
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "SUN",
+      "spice_az": 263.755268,
+      "spice_el": 1.497131,
+      "horizons_az": 263.755259871,
+      "horizons_el": 1.497140062,
+      "d_az_deg": 8e-06,
+      "d_el_deg": -9e-06
+    },
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "EARTH",
+      "spice_az": 135.894312,
+      "spice_el": -5.041489,
+      "horizons_az": 135.894304965,
+      "horizons_el": -5.041495648,
+      "d_az_deg": 7e-06,
+      "d_el_deg": 6e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "SUN",
+      "spice_az": 187.710298,
+      "spice_el": 1.001438,
+      "horizons_az": 187.710289767,
+      "horizons_el": 1.001436255,
+      "d_az_deg": 9e-06,
+      "d_el_deg": 2e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "EARTH",
+      "spice_az": 129.937231,
+      "spice_el": 3.135597,
+      "horizons_az": 129.937223682,
+      "horizons_el": 3.13558869,
+      "d_az_deg": 8e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "SUN",
+      "spice_az": 51.148034,
+      "spice_el": 1.810819,
+      "horizons_az": 51.148026653,
+      "horizons_el": 1.810810156,
+      "d_az_deg": 7e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "EARTH",
+      "spice_az": 143.963551,
+      "spice_el": -2.804443,
+      "horizons_az": 143.963544337,
+      "horizons_el": -2.80445274,
+      "d_az_deg": 6e-06,
+      "d_el_deg": 1e-05
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "SUN",
+      "spice_az": 222.773903,
+      "spice_el": -1.27355,
+      "horizons_az": 222.773895013,
+      "horizons_el": -1.273545319,
+      "d_az_deg": 8e-06,
+      "d_el_deg": -5e-06
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "EARTH",
+      "spice_az": 133.891809,
+      "spice_el": 4.802697,
+      "horizons_az": 133.891801561,
+      "horizons_el": 4.80268575,
+      "d_az_deg": 8e-06,
+      "d_el_deg": 1.1e-05
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "SUN",
+      "spice_az": 116.108658,
+      "spice_el": -1.340973,
+      "horizons_az": 116.108653142,
+      "horizons_el": -1.34098123,
+      "d_az_deg": 5e-06,
+      "d_el_deg": 8e-06
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "EARTH",
+      "spice_az": 137.776539,
+      "spice_el": -3.104397,
+      "horizons_az": 137.776535045,
+      "horizons_el": -3.104402913,
+      "d_az_deg": 4e-06,
+      "d_el_deg": 6e-06
+    }
+  ],
+  "Site04": [
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "SUN",
+      "spice_az": 283.686073,
+      "spice_el": 1.612908,
+      "horizons_az": 283.686069517,
+      "horizons_el": 1.61291706,
+      "d_az_deg": 3e-06,
+      "d_el_deg": -9e-06
+    },
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "EARTH",
+      "spice_az": 155.839963,
+      "spice_el": -4.86554,
+      "horizons_az": 155.83996098,
+      "horizons_el": -4.865546427,
+      "d_az_deg": 2e-06,
+      "d_el_deg": 6e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "SUN",
+      "spice_az": 207.631853,
+      "spice_el": 1.332981,
+      "horizons_az": 207.631849509,
+      "horizons_el": 1.332979154,
+      "d_az_deg": 3e-06,
+      "d_el_deg": 2e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "EARTH",
+      "spice_az": 149.841344,
+      "spice_el": 3.28118,
+      "horizons_az": 149.841341501,
+      "horizons_el": 3.281170809,
+      "d_az_deg": 2e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "SUN",
+      "spice_az": 71.064448,
+      "spice_el": 1.544673,
+      "horizons_az": 71.06444598,
+      "horizons_el": 1.544663712,
+      "d_az_deg": 2e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "EARTH",
+      "spice_az": 163.89674,
+      "spice_el": -2.590462,
+      "horizons_az": 163.896738897,
+      "horizons_el": -2.590471763,
+      "d_az_deg": 1e-06,
+      "d_el_deg": 1e-05
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "SUN",
+      "spice_az": 242.693059,
+      "spice_el": -0.980954,
+      "horizons_az": 242.693056891,
+      "horizons_el": -0.980949306,
+      "d_az_deg": 3e-06,
+      "d_el_deg": -5e-06
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "EARTH",
+      "spice_az": 153.788014,
+      "spice_el": 4.968645,
+      "horizons_az": 153.788011784,
+      "horizons_el": 4.96863403,
+      "d_az_deg": 2e-06,
+      "d_el_deg": 1.1e-05
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "SUN",
+      "spice_az": 136.038401,
+      "spice_el": -1.271357,
+      "horizons_az": 136.038400981,
+      "horizons_el": -1.271364568,
+      "d_az_deg": -0.0,
+      "d_el_deg": 8e-06
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "EARTH",
+      "spice_az": 157.712254,
+      "spice_el": -2.919235,
+      "horizons_az": 157.712254736,
+      "horizons_el": -2.919240894,
+      "d_az_deg": -1e-06,
+      "d_el_deg": 6e-06
+    }
+  ],
+  "Site07": [
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "SUN",
+      "spice_az": 2.842993,
+      "spice_el": 2.747759,
+      "horizons_az": 2.84299139,
+      "horizons_el": 2.747768552,
+      "d_az_deg": 2e-06,
+      "d_el_deg": -9e-06
+    },
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "EARTH",
+      "spice_az": 235.077083,
+      "spice_el": -5.331696,
+      "horizons_az": 235.077082842,
+      "horizons_el": -5.331702328,
+      "d_az_deg": 0.0,
+      "d_el_deg": 6e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "SUN",
+      "spice_az": 286.748702,
+      "spice_el": 1.887828,
+      "horizons_az": 286.748700264,
+      "horizons_el": 1.887825648,
+      "d_az_deg": 2e-06,
+      "d_el_deg": 2e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "EARTH",
+      "spice_az": 228.929288,
+      "spice_el": 2.703639,
+      "horizons_az": 228.929287081,
+      "horizons_el": 2.703630218,
+      "d_az_deg": 1e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "SUN",
+      "spice_az": 150.216657,
+      "spice_el": 0.432392,
+      "horizons_az": 150.216657098,
+      "horizons_el": 0.432382179,
+      "d_az_deg": 0.0,
+      "d_el_deg": 1e-05
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "EARTH",
+      "spice_az": 243.091585,
+      "spice_el": -2.901933,
+      "horizons_az": 243.091585814,
+      "horizons_el": -2.901943136,
+      "d_az_deg": -1e-06,
+      "d_el_deg": 1e-05
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "SUN",
+      "spice_az": 321.843115,
+      "spice_el": 0.065984,
+      "horizons_az": 321.843113874,
+      "horizons_el": 0.065989218,
+      "d_az_deg": 1e-06,
+      "d_el_deg": -5e-06
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "EARTH",
+      "spice_az": 232.841777,
+      "spice_el": 4.46225,
+      "horizons_az": 232.841776093,
+      "horizons_el": 4.462239096,
+      "d_az_deg": 1e-06,
+      "d_el_deg": 1.1e-05
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "SUN",
+      "spice_az": 215.20916,
+      "spice_el": -2.074641,
+      "horizons_az": 215.209161561,
+      "horizons_el": -2.074649124,
+      "d_az_deg": -2e-06,
+      "d_el_deg": 8e-06
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "EARTH",
+      "spice_az": 236.913087,
+      "spice_el": -3.350455,
+      "horizons_az": 236.913089597,
+      "horizons_el": -3.350460729,
+      "d_az_deg": -3e-06,
+      "d_el_deg": 6e-06
+    }
+  ],
+  "Site11": [
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "SUN",
+      "spice_az": 194.987371,
+      "spice_el": 0.270228,
+      "horizons_az": 194.987372492,
+      "horizons_el": 0.270236962,
+      "d_az_deg": -2e-06,
+      "d_el_deg": -9e-06
+    },
+    {
+      "epoch_utc": "2026-11-14 00:00",
+      "target": "EARTH",
+      "spice_az": 67.059144,
+      "spice_el": -4.130554,
+      "horizons_az": 67.059147202,
+      "horizons_el": -4.130560471,
+      "d_az_deg": -3e-06,
+      "d_el_deg": 6e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "SUN",
+      "spice_az": 118.959883,
+      "spice_el": 0.899224,
+      "horizons_az": 118.959884057,
+      "horizons_el": 0.899222186,
+      "d_az_deg": -2e-06,
+      "d_el_deg": 2e-06
+    },
+    {
+      "epoch_utc": "2026-11-20 06:00",
+      "target": "EARTH",
+      "spice_az": 61.217104,
+      "spice_el": 4.129209,
+      "horizons_az": 61.217106738,
+      "horizons_el": 4.129200646,
+      "d_az_deg": -2e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "SUN",
+      "spice_az": 342.344099,
+      "spice_el": 2.736455,
+      "horizons_az": 342.344102535,
+      "horizons_el": 2.736445656,
+      "d_az_deg": -3e-06,
+      "d_el_deg": 9e-06
+    },
+    {
+      "epoch_utc": "2026-12-01 12:00",
+      "target": "EARTH",
+      "spice_az": 75.156328,
+      "spice_el": -2.021284,
+      "horizons_az": 75.1563321,
+      "horizons_el": -2.021294074,
+      "d_az_deg": -4e-06,
+      "d_el_deg": 1e-05
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "SUN",
+      "spice_az": 153.975053,
+      "spice_el": -2.068525,
+      "horizons_az": 153.975055187,
+      "horizons_el": -2.068519851,
+      "d_az_deg": -2e-06,
+      "d_el_deg": -5e-06
+    },
+    {
+      "epoch_utc": "2027-03-15 18:00",
+      "target": "EARTH",
+      "spice_az": 65.199811,
+      "spice_el": 5.742322,
+      "horizons_az": 65.199813734,
+      "horizons_el": 5.742310399,
+      "d_az_deg": -2e-06,
+      "d_el_deg": 1.1e-05
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "SUN",
+      "spice_az": 47.331134,
+      "spice_el": -0.197587,
+      "horizons_az": 47.331138674,
+      "horizons_el": -0.197595108,
+      "d_az_deg": -5e-06,
+      "d_el_deg": 8e-06
+    },
+    {
+      "epoch_utc": "2027-06-21 00:00",
+      "target": "EARTH",
+      "spice_az": 68.96861,
+      "spice_el": -2.221795,
+      "horizons_az": 68.968615489,
+      "horizons_el": -2.221801416,
+      "d_az_deg": -6e-06,
+      "d_el_deg": 6e-06
+    }
+  ],
+  "_summary": {
+    "max_abs_diff_deg": 1.1e-05,
+    "note": "Horizons uses DE441 and its own lunar orientation; ours DE421 + MOON_ME_DE421. Azimuth differences are scaled by cos(el)."
+  }
+}

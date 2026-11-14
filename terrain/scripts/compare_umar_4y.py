@@ -1,5 +1,7 @@
 """Compare Umar's four-year visibility estimates (2009-07..2013-07) with the NASA PGDA
-average-illumination maps (AVGVISIB_85S_060M, Sun and Earth, same period).
+average-illumination maps (AVGVISIB_85S_060M, Sun and Earth). Correction 2026-11-14: the NASA maps are hourly
+averages over ~18.6 years, not the same period (the .LBL START/STOP_TIME is the LOLA data span); the period
+effect is measured in sun_visibility_periods.py (<= 1 pt).
 
 The NASA map counts the fraction of timesteps with ANY part of the disc visible.
 Umar's summary gives the MEAN visible fraction of the solar disc (a different metric) and

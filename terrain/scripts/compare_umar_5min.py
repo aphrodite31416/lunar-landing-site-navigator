@@ -1,6 +1,6 @@
 """Compare Umar's 4-year "any part of the Sun visible" from the full 5-minute series (2026-11-14,
 preliminary, terrain only) with the NASA PGDA average-illumination map AVGVISIB_85S_060M (Sun,
-2009-07..2013-07, any part of the disc), at the same site coordinates (centroid of the largest RoI,
+hourly over ~18.6 years, any part of the disc), at the same site coordinates (centroid of the largest RoI,
 data/derived/horizons/site_XX.json).
 
 Map read as in check_umar.py (orientation checked on the Shackleton floor = 0). Extra statistics:
@@ -67,7 +67,7 @@ def main():
         print(f"{key:6} {u:6.3f} {OLD[key]['umar_sun_any_part_daily']:5.3f} | {st['nearest']:5.3f} {st['bilinear']:5.3f} "
               f"{st['3x3_min_max'][1]:7.3f} {st['5x5_min_max'][1]:7.3f} {max(roi_vals):8.3f} | {(u - st['nearest']) * 100:+6.1f}")
     out["_note"] = ("Umar 5-min values from his message of 2026-11-14 (preliminary, terrain only). NASA map: "
-                    "AVGVISIB_85S_060M_201608, Sun, any part of the disc, 2009-07..2013-07, 60 m, LDEM_85S_060M. "
+                    "AVGVISIB_85S_060M_201608, Sun, any part of the disc, hourly over ~18.6 years, 60 m, LDEM_85S_060M. "
                     "Map max over the whole product: 0.884 (DERIVED_MAXIMUM in the .LBL).")
     OUT.write_text(json.dumps(out, indent=2))
     print("wrote", OUT.relative_to(ROOT))
