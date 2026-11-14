@@ -20,7 +20,7 @@ The disc fraction is a linear approximation (Sun radius ≈ 0.267°), only a san
 
 This month is southern summer on the Moon: the Sun sits ~1.5° above the horizontal at the pole and only swings by the site's co-latitude (0.5–1.3°). So ~100% sunlight is expected here, and it isn't representative of a whole year.
 
-## NASA PGDA average-illumination maps (60 m, 2009-07 to 2013-07, any part of the disc)
+## NASA PGDA average-illumination maps (60 m, hourly average over ~18.6 years, any part of the disc)
 | Site | Sun: pixel (3×3 min–max) | Earth: pixel (3×3 min–max) |
 |---|---|---|
 | Site01 | 0.68 (0.45–0.86) | 0.57 (0.51–0.58) |
@@ -28,10 +28,10 @@ This month is southern summer on the Moon: the Sun sits ~1.5° above the horizon
 | Site07 | 0.86 (0.17–0.86) | 0.56 (0.44–0.56) |
 | Site11 | 0.70 (0.38–0.83) | 0.61 (0.27–0.61) |
 
-These are 4-year averages, so they can't be compared directly with one summer month. The fair comparison is a multi-year run with the same horizon: ideally Umar's vectors over 2009-07..2013-07, or at least a full year. The 3×3 spread shows that 60 m pixels mix very different terrain around these ~100 m sites. Map orientation was checked on the Shackleton floor (value 0, permanent shadow).
+These are 18.6-year averages (corrected 2026-11-14; the .LBL START/STOP_TIME 2009–2013 is the LOLA data span), so they can't be compared directly with one summer month. The fair comparison is a multi-year run with the same horizon (done below: Umar's 4-year run, and our own 18.6-year check of 2026-11-14). The 3×3 spread shows that 60 m pixels mix very different terrain around these ~100 m sites. Map orientation was checked on the Shackleton floor (value 0, permanent shadow).
 # Umar's 4-year run vs NASA PGDA maps (2026-11-11)
 
-`umar_4y_vs_pgda.json`, made by `scripts/compare_umar_4y.py`, from Umar's `four_year_visibility_results` (2009-07-01 to 2013-07-01, same period as the NASA maps).
+`umar_4y_vs_pgda.json`, made by `scripts/compare_umar_4y.py`, from Umar's `four_year_visibility_results` (2009-07-01 to 2013-07-01). We first thought this was the NASA maps' period; it is not (they average ~18.6 years), but the period changes the result by ≤ 1 pt, see the 2026-11-14 check below.
 
 The NASA map counts the % of time *any part* of the disc is visible. Umar's summary gives the *mean visible disc fraction*, a different metric, so the "any part" column below comes from his daily file (00:00 UTC, 1462 samples per site; its mean disc fraction matches his 5-min summary to 0.01 pt).
 
@@ -79,3 +79,25 @@ The NASA map counts the % of time *any part* of the disc is visible. Umar's summ
 - Far blockers (80/240 m mosaics, 46–85 km median distance) have no published error map. Sensitivity: 0.0007–0.002° per metre of height error.
 - Barker et al. 2021 also show the errors bias the horizon **up** on average (one positive bump along the ray is enough), so illumination with errors is usually worse than nominal. This RMS estimate is symmetric and does not include that bias. A proper propagation would rerun the horizon on NASA's 100 error "clones" per site (also on product 78).
 - Barker et al. 2021, Table 2: at Site01, 1 m above the surface, 2024–2026, the 1st percentile of the RoI-averaged mean illumination over the 100 clones is 67–71% (our point is in their RoI 4: 69.6%). That is NASA's own number with the same 5 m DEM and the same 1 m height, and it is close to the RoI definition (> 70%).
+
+# Same period and same metric as NASA, with real SPICE (2026-11-14)
+
+`sun_visibility_periods.json`, made by `scripts/sun_visibility_periods.py`: our own Sun-visibility run with real SPICE (DE421 + MOON_ME_DE421, CN+S, the same kernel set as the team pipeline) and our horizon profiles, hourly like NASA, terrain only. The disc is cut by a horizontal line at the horizon elevation at the disc-centre azimuth, as in Mazarico et al. 2011 / Barker et al. 2021.
+
+What the NASA map is (checked 2026-11-14): an hourly average over a full ~18.6-year nodal cycle (product page, https://pgda.gsfc.nasa.gov/products/69: "averaged over hourly timesteps spanning 18.6 years"); the .LBL START/STOP_TIME (2009-07-13..2013-07-18) is the LOLA data span, not the simulation period. Metric, from the .LBL: "the percentage of timesteps where each pixel was sunlit (by any fraction of the solar disc)". The product page itself does not define it. Barker et al. 2021 use "average illumination" = mean visible fraction of the disc, but for their 5 m site study, not for this map. Both metrics are given below.
+
+| Site | Any part, 2009-07..2013-07 | Any part, 18.6 yr from 2009-07 | Any part, 18.6 yr from 1995-01 | Mean disc fraction, 18.6 yr from 2009-07 | Umar, any part, 5 min, 2009–13 | NASA pixel (bilinear) |
+|---|---|---|---|---|---|---|
+| Site01 | 87.8% | 87.3% | 86.8% | 82.3% | 87.8% | 68.5% (67.1%) |
+| Site04 | 78.6% | 78.4% | 77.8% | 73.0% | 78.5% | 67.2% (66.8%) |
+| Site07 | 82.2% | 81.9% | 81.3% | 78.3% | 82.1% | 86.0% (83.7%) |
+| Site11 | 85.1% | 84.7% | 84.1% | 81.1% | 85.1% | 70.2% (72.2%) |
+
+- **Umar's numbers are reproduced** to ≤ 0.1 pt by an independent code (different time step, our own SPICE calls).
+- **The period is not the cause**: 4 years vs a full 18.6-year cycle changes the result by 0.2–1.0 pt.
+- **The metric is not the cause**: the mean disc fraction is 3.6–5.4 pts below "any part", and is still 6–14 pts above NASA at Site01/04/11 (and 8 pts below at Site07).
+- So the ephemeris, time span and metric agree; the gap comes from the **terrain/horizon**: our 5 m DEM near the site + 1 m observer vs NASA's 60 m LDEM_85S_060M (observer height not stated on the product page). Barker et al. 2021 show the old LDEM predicts worse illumination than the new 5 m one, and that 1 m vs 5 m of height changes the light a lot. Not yet quantified for our points.
+
+# Real SPICE vs JPL Horizons, all 4 sites (2026-11-14)
+
+`spice_vs_horizons.json`, made by `scripts/check_spice_vs_horizons.py`: spiceypy `spkcpo` (DE421, MOON_ME_DE421, CN+S, refloc OBSERVER, observer XYZ of the horizon files) vs JPL Horizons (DE441, `coord@301`, apparent az/el), Sun and Earth, 5 epochs from 2026-11-14 to 2027-06-21, all 4 sites (40 comparisons). Max difference: **0.000011°** (azimuth scaled by cos el). This extends the 2026-11-08 Site01 spot check to all sites, and uses the same kernel set and `spkcpo` call as `scientific/ephemeris/spice.py`.

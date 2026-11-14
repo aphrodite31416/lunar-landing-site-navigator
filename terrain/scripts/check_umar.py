@@ -5,7 +5,7 @@ For each site:
 2. Recompute az/el from his NPZ vectors with our local basis (radial up, 0 = N, 90 = E) and compare with his CSV.
 3. Terrain horizon at the Sun/Earth azimuth from our site_XX.json (periodic interpolation) vs his CSV column.
 4. Flags: centre above horizon, plus sun disc fraction (radius 0.2666 deg, linear approx) over the full month.
-5. NASA PGDA average-illumination map (Sun and Earth, 60 m, 2009-2013) at the site, 3x3 neighbourhood.
+5. NASA PGDA average-illumination map (Sun and Earth, 60 m, hourly average over ~18.6 years) at the site, 3x3 neighbourhood.
 
 Run: .venv/Scripts/python scripts/check_umar.py
 Writes data/derived/validation/umar_check.json.
@@ -114,7 +114,7 @@ def main():
         big = max(rois[site], key=lambda x: x["area_m2"])
         r["pgda_map_at_site"] = {"sun": map_value(sun_map, hz["lat_deg"], hz["lon_deg"], 1),
                                  "earth": map_value(earth_map, hz["lat_deg"], hz["lon_deg"], 1),
-                                 "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+                                 "note": "hourly average over ~18.6 years, any part of the disc; [centre, 3x3 min, 3x3 max]",
                                  "roi": big["roi"]}
         report[site] = r
         print(site, json.dumps(r, indent=1))

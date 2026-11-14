@@ -71,7 +71,7 @@
     0.5111600000000001,
     0.58172
    ],
-   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "note": "hourly average over ~18.6 years, any part of the disc; [centre, 3x3 min, 3x3 max]",
    "roi": 3
   }
  },
@@ -147,7 +147,7 @@
     0.36684000000000005,
     0.5062000000000001
    ],
-   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "note": "hourly average over ~18.6 years, any part of the disc; [centre, 3x3 min, 3x3 max]",
    "roi": 0
   }
  },
@@ -223,7 +223,7 @@
     0.4424,
     0.56452
    ],
-   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "note": "hourly average over ~18.6 years, any part of the disc; [centre, 3x3 min, 3x3 max]",
    "roi": 1
   }
  },
@@ -299,7 +299,7 @@
     0.27092000000000005,
     0.6142000000000001
    ],
-   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "note": "hourly average over ~18.6 years, any part of the disc; [centre, 3x3 min, 3x3 max]",
    "roi": 0
   }
  }
