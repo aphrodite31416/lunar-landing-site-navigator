@@ -1,0 +1,124 @@
+{
+  "Site01": {
+    "lat_deg": -89.4527,
+    "lon_deg": -137.1523,
+    "umar_any_part_5min": 0.8776,
+    "umar_any_part_daily_20261111": 0.920656634746922,
+    "nasa_sun_any_part": {
+      "nearest": 0.68484,
+      "bilinear": 0.6714731431850862,
+      "3x3_min_max": [
+        0.45360000000000006,
+        0.8642000000000001
+      ],
+      "5x5_min_max": [
+        0.0,
+        0.8642000000000001
+      ],
+      "offset_from_pixel_centre_m": [
+        -6.2,
+        -12.3
+      ]
+    },
+    "nasa_at_roi_centroids": [
+      0.6496400000000001,
+      0.7208000000000001,
+      0.65,
+      0.68484,
+      0.83128,
+      0.86304,
+      0.8012800000000001
+    ],
+    "diff_vs_nearest_pts": 19.28,
+    "above_5x5_max": true
+  },
+  "Site04": {
+    "lat_deg": -89.76205,
+    "lon_deg": -157.075,
+    "umar_any_part_5min": 0.7852,
+    "umar_any_part_daily_20261111": 0.8666210670314638,
+    "nasa_sun_any_part": {
+      "nearest": 0.6722800000000001,
+      "bilinear": 0.667576612080209,
+      "3x3_min_max": [
+        0.42928000000000005,
+        0.7602800000000001
+      ],
+      "5x5_min_max": [
+        0.0,
+        0.8163600000000001
+      ],
+      "offset_from_pixel_centre_m": [
+        9.4,
+        -14.5
+      ]
+    },
+    "nasa_at_roi_centroids": [
+      0.6722800000000001,
+      0.49388000000000004,
+      0.06256,
+      0.8021600000000001
+    ],
+    "diff_vs_nearest_pts": 11.29,
+    "above_5x5_max": false
+  },
+  "Site07": {
+    "lat_deg": -88.80737,
+    "lon_deg": 123.7767,
+    "umar_any_part_5min": 0.8209,
+    "umar_any_part_daily_20261111": 0.847469220246238,
+    "nasa_sun_any_part": {
+      "nearest": 0.8595600000000001,
+      "bilinear": 0.8366179803705643,
+      "3x3_min_max": [
+        0.17020000000000002,
+        0.8595600000000001
+      ],
+      "5x5_min_max": [
+        0.17020000000000002,
+        0.8595600000000001
+      ],
+      "offset_from_pixel_centre_m": [
+        1.4,
+        6.7
+      ]
+    },
+    "nasa_at_roi_centroids": [
+      0.7083200000000001,
+      0.8595600000000001
+    ],
+    "diff_vs_nearest_pts": -3.87,
+    "above_5x5_max": false
+  },
+  "Site11": {
+    "lat_deg": -88.66832,
+    "lon_deg": -68.3754,
+    "umar_any_part_5min": 0.8506,
+    "umar_any_part_daily_20261111": 0.8946648426812586,
+    "nasa_sun_any_part": {
+      "nearest": 0.7024,
+      "bilinear": 0.7224041978726197,
+      "3x3_min_max": [
+        0.38324,
+        0.8269200000000001
+      ],
+      "5x5_min_max": [
+        0.38324,
+        0.8269200000000001
+      ],
+      "offset_from_pixel_centre_m": [
+        19.4,
+        -2.0
+      ]
+    },
+    "nasa_at_roi_centroids": [
+      0.7024,
+      0.62572,
+      0.65112,
+      0.6613600000000001
+    ],
+    "diff_vs_nearest_pts": 14.82,
+    "above_5x5_max": true
+  },
+  "_note": "Umar 5-min values from his message of 2026-11-14 (preliminary, terrain only). NASA map: AVGVISIB_85S_060M_201608, Sun, any part of the disc, 2009-07..2013-07, 60 m, LDEM_85S_060M. Map max over the whole product: 0.884 (DERIVED_MAXIMUM in the .LBL)."
+}
