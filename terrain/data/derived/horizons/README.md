@@ -20,9 +20,15 @@ Great-circle rays from the site; elevation angle with Zarina's exact formula (RE
 | Site07 | −2.535 / −0.276 | 161.9 | 5014 |
 | Site11 | −3.574 / +0.339 | 166.5 | 2770 |
 
-Convergence checks on Site01 (`site_01_checks.json`), criterion |Δh| < 0.01°:
-- azimuth: the 0.025° midpoints vs periodic interpolation of the 0.05° profile → max 0.0051°, p99 0.0013°, 0 azimuths above 0.01°;
-- distance: half the distance steps (28 933 samples per ray) → max 0.0013°, p99 0.0006°, 0 above 0.01°;
-- smooth sphere (z = z0 everywhere): −0.06144° exactly as expected.
+Convergence checks on all 4 sites (`site_XX_checks.json`; Site01 on 2026-11-07, Site04/07/11 on 2026-11-14, profiles bit-identical to the published ones), criterion |Δh| < 0.01°:
+
+| Site | Azimuth 0.025° vs 0.05°: max / p99 | Azimuths above 0.01° | Half distance steps: max / p99 | Smooth sphere |
+|---|---|---|---|---|
+| Site01 | 0.0051° / 0.0013° | 0 | 0.0013° / 0.0006° | −0.06144° ✓ |
+| Site04 | 0.0104° / 0.0020° | 2 of 7200 (0.03%) | 0.0033° / 0.0009° | −0.06144° ✓ |
+| Site07 | 0.0048° / 0.0014° | 0 | 0.0020° / 0.0002° | −0.06144° ✓ |
+| Site11 | 0.0058° / 0.0015° | 0 | 0.0033° / 0.0003° | −0.06144° ✓ |
+
+Site04 has 2 azimuths a hair over the target (max 0.0104°, at 43.3°). Sampling error is much smaller than the error from the DEM's own height uncertainty (0.02–0.24° median, see `../validation/README.md`).
 
 Re-run: `python scripts/horizon.py Site01 -89.45270 -137.1523 "Connecting ridge (Site01, largest RoI)" --checks` from the repo root (~1 min per site, ~4 min with the checks).

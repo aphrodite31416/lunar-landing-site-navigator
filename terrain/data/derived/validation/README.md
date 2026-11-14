@@ -61,3 +61,21 @@ The NASA map counts the % of time *any part* of the disc is visible. Umar's summ
 - Site01 (87.8%) is now below the whole-map maximum (88.4%), so it is no longer physically "impossible" for the map, just much brighter than the map says at that spot.
 - The site points fall 2–20 m from the nearest pixel centre, so pixel choice is not the issue.
 - Still open: our 5 m DEM + 1 m observer vs NASA's 60 m DEM (observer height of the map not checked) explains part of it at most; Zarina's `analyze` cross-check is pending.
+
+# Horizon uncertainty from the DEM's vertical error (2026-11-14)
+
+`horizon_uncertainty.json`, made by `scripts/horizon_uncertainty.py`. Height errors come from NASA's own per-pixel error maps for the 5 m DEMs (`SiteXX_final_adj_5mpp_toterr.tif`, "Total Z uncertainty in meters (formally, the RMS error)", https://pgda.gsfc.nasa.gov/products/78), described in Barker et al. 2021, *Planet. Space Sci.* 203, 105119 (median RMS height error ~0.30–0.50 m inside the RoIs). For each azimuth, the error at the blocker point and at the observer is turned into an angle: σ_h ≈ √(σ_blocker² + σ_observer²) / d (small angle, independent errors).
+
+| Site | σ_z at the site | Azimuths with blocker in the 5 m tile | σ_z at those blockers (median) | σ_h, blocker ≥ 100 m away (median / p95) | Blocker < 100 m away (share of azimuths) |
+|---|---|---|---|---|---|
+| Site01 | 0.27 m | 56% | 0.23 m | 0.044° / 0.20° | 36% |
+| Site04 | 0.56 m | 48% | 0.36 m | 0.020° / 0.47° | 27% |
+| Site07 | 0.37 m | 70% | 0.20 m | 0.17° / 0.23° | 36% |
+| Site11 | 0.55 m | 39% | 0.25 m | 0.24° / 0.37° | 15% |
+
+- The shares of blockers in the 5 m tile match MaKenna's numbers (56 / 48 / 70 / 38%).
+- **The DEM's height error is the largest error in the horizon**: hundredths to tenths of a degree, against ≤ 0.01° from the azimuth/distance sampling (convergence checks). With the Sun only a few degrees above the horizon at the pole, that is hours in event times.
+- Blockers closer than 100 m (15–36% of azimuths) give σ_h of 0.4–2° with this formula, but there the blocker and the observer share the same interpolation error, so the formula overstates them. These near blockers sit mostly below the horizontal (median horizon −0.3 to −1.7°).
+- Far blockers (80/240 m mosaics, 46–85 km median distance) have no published error map. Sensitivity: 0.0007–0.002° per metre of height error.
+- Barker et al. 2021 also show the errors bias the horizon **up** on average (one positive bump along the ray is enough), so illumination with errors is usually worse than nominal. This RMS estimate is symmetric and does not include that bias. A proper propagation would rerun the horizon on NASA's 100 error "clones" per site (also on product 78).
+- Barker et al. 2021, Table 2: at Site01, 1 m above the surface, 2024–2026, the 1st percentile of the RoI-averaged mean illumination over the 100 clones is 67–71% (our point is in their RoI 4: 69.6%). That is NASA's own number with the same 5 m DEM and the same 1 m height, and it is close to the RoI definition (> 70%).

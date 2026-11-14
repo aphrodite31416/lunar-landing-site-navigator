@@ -6,6 +6,8 @@ então cada pessoa baixa direto da NASA. Retoma downloads interrompidos e confer
 Uso:
     python scripts/download_data.py            # tudo
     python scripts/download_data.py Site01     # só os arquivos cujo nome contém "Site01"
+    python scripts/download_data.py incerteza  # mapas de incerteza vertical do 5 m (~164 MB, opcional,
+                                               # usados por scripts/horizon_uncertainty.py)
 """
 import sys
 import urllib.request
@@ -21,11 +23,17 @@ FILES = {
     "LDEM_80S_80MPP_ADJ.TIF": (f"{PGDA}/LOLA_20mpp/LDEM_80S_80MPP_ADJ.TIF", 189158392),
     "LDEM_60S_240MPP_ADJ.TIF": (f"{PGDA}/LOLA_20mpp/LDEM_60S_240MPP_ADJ.TIF", 218961039),
 }
+# Opcionais: só baixam quando "incerteza" é pedido. "Total Z uncertainty (RMS)", Barker et al. 2021.
+EXTRA = {
+    f"incerteza/Site{s}_final_adj_5mpp_toterr.tif": (f"{PGDA}/LOLA_5mpp/Site{s}/Site{s}_final_adj_5mpp_toterr.tif", n)
+    for s, n in (("01", 40980810), ("04", 40980808), ("07", 40980810), ("11", 40980810))
+}
 CHUNK = 1 << 20
 
 
 def fetch(name, url, size):
     dest = RAW / name
+    dest.parent.mkdir(parents=True, exist_ok=True)
     have = dest.stat().st_size if dest.exists() else 0
     if have == size:
         print(f"ok   {name} (already downloaded)")
@@ -57,6 +65,9 @@ def main():
     only = sys.argv[1:]
     for name, (url, size) in FILES.items():
         if not only or any(o in name for o in only):
+            fetch(name, url, size)
+    if "incerteza" in only:
+        for name, (url, size) in EXTRA.items():
             fetch(name, url, size)
 
 
