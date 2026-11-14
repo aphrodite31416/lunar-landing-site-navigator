@@ -1,0 +1,30 @@
+{
+  "site_id": "site11",
+  "observer_position_xyz_m": [
+    14895.56,
+    -37574.75,
+    -1738745.45
+  ],
+  "frame": "MOON_ME_DE421",
+  "observer_center": "MOON",
+  "abcorr": "CN+S",
+  "spkcpo_refloc": "OBSERVER",
+  "kernel_filenames": [
+    "naif0012.tls",
+    "de421.bsp",
+    "pck00011.tpc",
+    "moon_pa_de421_1900-2050.bpc",
+    "moon_080317.tf"
+  ],
+  "time_scale": "elapsed ET seconds from et_start",
+  "cadence_seconds_nominal": 300,
+  "sample_count": 8641,
+  "vector_units": "m",
+  "vector_origin": "surface observer",
+  "vector_target": "body centre",
+  "vectors_normalized": false,
+  "sun_key": "sun_vectors_m",
+  "earth_key": "earth_vectors_m",
+  "start_utc": "2026-11-14T00:00:00Z",
+  "end_utc": "2026-12-14T00:00:00Z"
+}

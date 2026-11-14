@@ -1,0 +1,75 @@
+{
+  "Site01": {
+    "umar_sun_mean_disc_fraction": 0.8271870017051697,
+    "umar_sun_any_part_daily": 0.920656634746922,
+    "umar_sun_full_disc_daily": 0.6976744186046512,
+    "umar_sun_mean_disc_fraction_daily": 0.8273048244280439,
+    "umar_earth_centre": 0.5504184005951008,
+    "nasa_sun_any_part": [
+      0.68484,
+      0.45360000000000006,
+      0.8642000000000001
+    ],
+    "nasa_earth_any_part": [
+      0.57496,
+      0.5111600000000001,
+      0.58172
+    ],
+    "daily_samples": 1462
+  },
+  "Site04": {
+    "umar_sun_mean_disc_fraction": 0.7327088117599487,
+    "umar_sun_any_part_daily": 0.8666210670314638,
+    "umar_sun_full_disc_daily": 0.5677154582763337,
+    "umar_sun_mean_disc_fraction_daily": 0.7328909616100349,
+    "umar_earth_centre": 0.4596750235877643,
+    "nasa_sun_any_part": [
+      0.6722800000000001,
+      0.42928000000000005,
+      0.7602800000000001
+    ],
+    "nasa_earth_any_part": [
+      0.46896000000000004,
+      0.36684000000000005,
+      0.5062000000000001
+    ],
+    "daily_samples": 1462
+  },
+  "Site07": {
+    "umar_sun_mean_disc_fraction": 0.784835934638977,
+    "umar_sun_any_part_daily": 0.847469220246238,
+    "umar_sun_full_disc_daily": 0.7113543091655267,
+    "umar_sun_mean_disc_fraction_daily": 0.7849825238771703,
+    "umar_earth_centre": 0.5167158226960636,
+    "nasa_sun_any_part": [
+      0.8595600000000001,
+      0.17020000000000002,
+      0.8595600000000001
+    ],
+    "nasa_earth_any_part": [
+      0.56452,
+      0.4424,
+      0.56452
+    ],
+    "daily_samples": 1462
+  },
+  "Site11": {
+    "umar_sun_mean_disc_fraction": 0.8140953779220581,
+    "umar_sun_any_part_daily": 0.8946648426812586,
+    "umar_sun_full_disc_daily": 0.7175102599179206,
+    "umar_sun_mean_disc_fraction_daily": 0.8142220838313022,
+    "umar_earth_centre": 0.5817800265703985,
+    "nasa_sun_any_part": [
+      0.7024,
+      0.38324,
+      0.8269200000000001
+    ],
+    "nasa_earth_any_part": [
+      0.61068,
+      0.27092000000000005,
+      0.6142000000000001
+    ],
+    "daily_samples": 1462
+  },
+  "_note": "NASA values: [centre pixel, 3x3 min, 3x3 max], 60 m map, any part of the disc. Umar any-part/full-disc come from his daily 00:00 UTC samples (1462 per site)."
+}

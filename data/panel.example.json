@@ -1,0 +1,6 @@
+{
+  "area_m2": 2.0,
+  "efficiency": 0.3,
+  "normal_enu": [0, 0, 1],
+  "irradiance_at_1au_w_m2": 1361.0
+}

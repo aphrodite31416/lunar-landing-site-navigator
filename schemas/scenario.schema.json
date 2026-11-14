@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Terrain-aware lunar scenario v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "site_id", "period", "model", "provenance", "quality", "series", "windows", "events", "metrics"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "kind": {"const": "terrain_scenario"},
+    "site_id": {"enum": ["site01", "site04", "site07", "site11"]},
+    "period": {
+      "type": "object", "required": ["start_utc", "end_utc", "duration_s"],
+      "properties": {"start_utc": {"type": "string"}, "end_utc": {"type": "string"}, "duration_s": {"type": "number", "exclusiveMinimum": 0}}
+    },
+    "model": {
+      "type": "object", "required": ["frame", "abcorr", "refloc", "earth_visibility_criterion", "solar_visibility_model", "vector_method", "settings", "panel", "integration", "horizon_margin_deg"],
+      "properties": {
+        "frame": {"const": "MOON_ME_DE421"}, "abcorr": {"const": "CN+S"}, "refloc": {"const": "OBSERVER"},
+        "settings": {
+          "type": "object", "required": ["minimum_sun_fraction", "disc_samples", "search_max_step_s", "event_tolerance_s"],
+          "properties": {"minimum_sun_fraction": {"$ref": "#/$defs/fraction"}, "disc_samples": {"type": "integer", "minimum": 16}, "search_max_step_s": {"type": "number", "exclusiveMinimum": 0}, "event_tolerance_s": {"type": "number", "exclusiveMinimum": 0}}
+        },
+        "panel": {"type": ["object", "null"]}, "horizon_margin_deg": {"type": "number"}
+      }
+    },
+    "provenance": {"type": "object", "required": ["input_sha256", "horizon_sha256", "kernel_sha256"]},
+    "quality": {
+      "type": "object", "required": ["terrain_coverage", "warnings", "evaluation_count", "search_max_gap_s"],
+      "properties": {"terrain_coverage": {"const": "complete"}, "warnings": {"type": "array", "items": {"type": "string"}}, "evaluation_count": {"type": "integer", "minimum": 2}, "search_max_gap_s": {"type": "number", "exclusiveMinimum": 0}}
+    },
+    "series": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/sample"}},
+    "windows": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sunlight", "earth", "joint", "darkness", "insufficient_light", "earth_gap"],
+      "properties": {"sunlight": {"$ref": "#/$defs/windows"}, "earth": {"$ref": "#/$defs/windows"}, "joint": {"$ref": "#/$defs/windows"}, "darkness": {"$ref": "#/$defs/windows"}, "insufficient_light": {"$ref": "#/$defs/windows"}, "earth_gap": {"$ref": "#/$defs/windows"}}
+    },
+    "events": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "active_after", "offset_s", "utc"],
+      "properties": {"kind": {"enum": ["sunlight", "earth", "darkness"]}, "active_after": {"type": "boolean"}, "offset_s": {"type": "number", "minimum": 0}, "utc": {"type": "string"}}
+    }},
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sunlight_s", "sunlight_time_fraction", "longest_sunlight_s", "longest_insufficient_light_s", "longest_darkness_s", "earth_visible_s", "longest_earth_gap_s", "joint_s", "longest_joint_s", "mean_sun_visible_fraction", "equivalent_full_disc_s", "energy_wh"],
+      "properties": {"sunlight_s": {"$ref": "#/$defs/duration"}, "sunlight_time_fraction": {"$ref": "#/$defs/fraction"}, "longest_sunlight_s": {"$ref": "#/$defs/duration"}, "longest_insufficient_light_s": {"$ref": "#/$defs/duration"}, "longest_darkness_s": {"$ref": "#/$defs/duration"}, "earth_visible_s": {"$ref": "#/$defs/duration"}, "longest_earth_gap_s": {"$ref": "#/$defs/duration"}, "joint_s": {"$ref": "#/$defs/duration"}, "longest_joint_s": {"$ref": "#/$defs/duration"}, "mean_sun_visible_fraction": {"$ref": "#/$defs/fraction"}, "equivalent_full_disc_s": {"$ref": "#/$defs/duration"}, "energy_wh": {"type": ["number", "null"], "minimum": 0}}
+    }
+  },
+  "$defs": {
+    "fraction": {"type": "number", "minimum": 0, "maximum": 1},
+    "duration": {"type": "number", "minimum": 0},
+    "angle": {"type": ["number", "null"]},
+    "windows": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start_utc", "end_utc", "start_offset_s", "end_offset_s", "duration_s", "start_clipped", "end_clipped"],
+      "properties": {"start_utc": {"type": "string"}, "end_utc": {"type": "string"}, "start_offset_s": {"$ref": "#/$defs/duration"}, "end_offset_s": {"$ref": "#/$defs/duration"}, "duration_s": {"type": "number", "exclusiveMinimum": 0}, "start_clipped": {"type": "boolean"}, "end_clipped": {"type": "boolean"}}
+    }},
+    "sample": {
+      "type": "object", "additionalProperties": false,
+      "required": ["offset_s", "utc", "sun_visible_fraction", "sun_terrain_visible_fraction", "sunlight_available", "earth_center_visible", "power_w", "sun_azimuth_deg", "sun_elevation_deg", "sun_clearance_deg", "sun_horizon_deg", "earth_azimuth_deg", "earth_elevation_deg", "earth_clearance_deg", "earth_horizon_deg", "sun_angular_radius_deg"],
+      "properties": {"offset_s": {"$ref": "#/$defs/duration"}, "utc": {"type": "string"}, "sun_visible_fraction": {"$ref": "#/$defs/fraction"}, "sun_terrain_visible_fraction": {"$ref": "#/$defs/fraction"}, "sunlight_available": {"type": "boolean"}, "earth_center_visible": {"type": "boolean"}, "power_w": {"type": ["number", "null"], "minimum": 0}, "sun_azimuth_deg": {"$ref": "#/$defs/angle"}, "sun_elevation_deg": {"$ref": "#/$defs/angle"}, "sun_clearance_deg": {"$ref": "#/$defs/angle"}, "sun_horizon_deg": {"$ref": "#/$defs/angle"}, "earth_azimuth_deg": {"$ref": "#/$defs/angle"}, "earth_elevation_deg": {"$ref": "#/$defs/angle"}, "earth_clearance_deg": {"$ref": "#/$defs/angle"}, "earth_horizon_deg": {"$ref": "#/$defs/angle"}, "sun_angular_radius_deg": {"type": "number", "exclusiveMinimum": 0}}
+    }
+  }
+}

@@ -1,0 +1,306 @@
+{
+ "Site01": {
+  "observer_xyz_max_diff_m": 0.0,
+  "frame": "MOON_ME_DE421",
+  "abcorr": "CN+S",
+  "refloc": "OBSERVER",
+  "kernels": [
+   "naif0012.tls",
+   "de421.bsp",
+   "pck00011.tpc",
+   "moon_pa_de421_1900-2050.bpc",
+   "moon_080317.tf"
+  ],
+  "utc": [
+   "2026-11-14 00:00:00 UTC",
+   "2026-12-14 00:00:00 UTC"
+  ],
+  "n_month": 8641,
+  "csv_rows": 577,
+  "csv_vs_vectors_max_deg": {
+   "sun_az": 5.684341886080802e-14,
+   "sun_el": 8.881784197001252e-16,
+   "earth_az": 2.842170943040401e-14,
+   "earth_el": 2.6645352591003757e-15
+  },
+  "csv_horizon_vs_ours_max_deg": {
+   "sun": 0.0,
+   "earth": 0.0
+  },
+  "csv_flag_mismatches": {
+   "sun": 0,
+   "earth": 0
+  },
+  "csv_48h": {
+   "sun_centre_up_frac": 1.0,
+   "earth_centre_up_frac": 0.0,
+   "sun_el_range": [
+    1.276552833364098,
+    1.4971307088477506
+   ],
+   "earth_el_range": [
+    -5.041489276052878,
+    -2.6858660948073565
+   ],
+   "min_sun_margin_deg": 2.470322518113486,
+   "max_earth_margin_deg": -0.7881727845516009
+  },
+  "month": {
+   "sun_centre_up_frac": 1.0,
+   "sun_any_part_up_frac": 1.0,
+   "sun_ge80pct_frac": 1.0,
+   "mean_disc_fraction": 1.0,
+   "earth_centre_up_frac": 0.4685800254600162,
+   "sun_el_range": [
+    0.9936778234083039,
+    1.999609798714689
+   ],
+   "earth_el_range": [
+    -7.270410283754919,
+    5.8746205138768275
+   ]
+  },
+  "pgda_map_at_site": {
+   "sun": [
+    0.68484,
+    0.45360000000000006,
+    0.8642000000000001
+   ],
+   "earth": [
+    0.57496,
+    0.5111600000000001,
+    0.58172
+   ],
+   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "roi": 3
+  }
+ },
+ "Site04": {
+  "observer_xyz_max_diff_m": 0.0,
+  "frame": "MOON_ME_DE421",
+  "abcorr": "CN+S",
+  "refloc": "OBSERVER",
+  "kernels": [
+   "naif0012.tls",
+   "de421.bsp",
+   "pck00011.tpc",
+   "moon_pa_de421_1900-2050.bpc",
+   "moon_080317.tf"
+  ],
+  "utc": [
+   "2026-11-14 00:00:00 UTC",
+   "2026-12-14 00:00:00 UTC"
+  ],
+  "n_month": 8641,
+  "csv_rows": 577,
+  "csv_vs_vectors_max_deg": {
+   "sun_az": 5.684341886080802e-14,
+   "sun_el": 6.661338147750939e-16,
+   "earth_az": 2.842170943040401e-14,
+   "earth_el": 1.7763568394002505e-15
+  },
+  "csv_horizon_vs_ours_max_deg": {
+   "sun": 0.0,
+   "earth": 0.0
+  },
+  "csv_flag_mismatches": {
+   "sun": 0,
+   "earth": 0
+  },
+  "csv_48h": {
+   "sun_centre_up_frac": 1.0,
+   "earth_centre_up_frac": 0.0,
+   "sun_el_range": [
+    1.5110873721053344,
+    1.6129077226217456
+   ],
+   "earth_el_range": [
+    -4.865540074465985,
+    -2.523641063917102
+   ],
+   "min_sun_margin_deg": 2.2703046162159395,
+   "max_earth_margin_deg": -3.074660867876888
+  },
+  "month": {
+   "sun_centre_up_frac": 0.9994213632681402,
+   "sun_any_part_up_frac": 1.0,
+   "sun_ge80pct_frac": 0.9825251706978358,
+   "mean_disc_fraction": 0.9927507974421466,
+   "earth_centre_up_frac": 0.37310496470315935,
+   "sun_el_range": [
+    1.2941663088274895,
+    1.6846470635930193
+   ],
+   "earth_el_range": [
+    -7.067965599176741,
+    6.039781233154898
+   ]
+  },
+  "pgda_map_at_site": {
+   "sun": [
+    0.6722800000000001,
+    0.42928000000000005,
+    0.7602800000000001
+   ],
+   "earth": [
+    0.46896000000000004,
+    0.36684000000000005,
+    0.5062000000000001
+   ],
+   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "roi": 0
+  }
+ },
+ "Site07": {
+  "observer_xyz_max_diff_m": 0.0,
+  "frame": "MOON_ME_DE421",
+  "abcorr": "CN+S",
+  "refloc": "OBSERVER",
+  "kernels": [
+   "naif0012.tls",
+   "de421.bsp",
+   "pck00011.tpc",
+   "moon_pa_de421_1900-2050.bpc",
+   "moon_080317.tf"
+  ],
+  "utc": [
+   "2026-11-14 00:00:00 UTC",
+   "2026-12-14 00:00:00 UTC"
+  ],
+  "n_month": 8641,
+  "csv_rows": 577,
+  "csv_vs_vectors_max_deg": {
+   "sun_az": 5.684341886080802e-14,
+   "sun_el": 1.3322676295501878e-15,
+   "earth_az": 5.684341886080802e-14,
+   "earth_el": 1.7763568394002505e-15
+  },
+  "csv_horizon_vs_ours_max_deg": {
+   "sun": 0.0,
+   "earth": 0.0
+  },
+  "csv_flag_mismatches": {
+   "sun": 0,
+   "earth": 0
+  },
+  "csv_48h": {
+   "sun_centre_up_frac": 1.0,
+   "earth_centre_up_frac": 0.0,
+   "sun_el_range": [
+    2.664565698580881,
+    2.749261916941512
+   ],
+   "earth_el_range": [
+    -5.331696052876605,
+    -3.041247968688817
+   ],
+   "min_sun_margin_deg": 3.8500666896654225,
+   "max_earth_margin_deg": -2.0854668623935564
+  },
+  "month": {
+   "sun_centre_up_frac": 1.0,
+   "sun_any_part_up_frac": 1.0,
+   "sun_ge80pct_frac": 1.0,
+   "mean_disc_fraction": 1.0,
+   "earth_centre_up_frac": 0.4215947228330054,
+   "sun_el_range": [
+    0.29016397673848465,
+    2.749261916941512
+   ],
+   "earth_el_range": [
+    -7.428340104345186,
+    5.531717296333431
+   ]
+  },
+  "pgda_map_at_site": {
+   "sun": [
+    0.8595600000000001,
+    0.17020000000000002,
+    0.8595600000000001
+   ],
+   "earth": [
+    0.56452,
+    0.4424,
+    0.56452
+   ],
+   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "roi": 1
+  }
+ },
+ "Site11": {
+  "observer_xyz_max_diff_m": 0.0,
+  "frame": "MOON_ME_DE421",
+  "abcorr": "CN+S",
+  "refloc": "OBSERVER",
+  "kernels": [
+   "naif0012.tls",
+   "de421.bsp",
+   "pck00011.tpc",
+   "moon_pa_de421_1900-2050.bpc",
+   "moon_080317.tf"
+  ],
+  "utc": [
+   "2026-11-14 00:00:00 UTC",
+   "2026-12-14 00:00:00 UTC"
+  ],
+  "n_month": 8641,
+  "csv_rows": 577,
+  "csv_vs_vectors_max_deg": {
+   "sun_az": 2.842170943040401e-14,
+   "sun_el": 4.718447854656915e-16,
+   "earth_az": 0.0,
+   "earth_el": 1.7763568394002505e-15
+  },
+  "csv_horizon_vs_ours_max_deg": {
+   "sun": 0.0,
+   "earth": 0.0
+  },
+  "csv_flag_mismatches": {
+   "sun": 0,
+   "earth": 0
+  },
+  "csv_48h": {
+   "sun_centre_up_frac": 1.0,
+   "earth_centre_up_frac": 0.0,
+   "sun_el_range": [
+    0.2244602152843659,
+    0.2702276189473645
+   ],
+   "earth_el_range": [
+    -4.130554040086901,
+    -1.7357121947709717
+   ],
+   "min_sun_margin_deg": 1.020924682818272,
+   "max_earth_margin_deg": -0.9839047927629042
+  },
+  "month": {
+   "sun_centre_up_frac": 1.0,
+   "sun_any_part_up_frac": 1.0,
+   "sun_ge80pct_frac": 1.0,
+   "mean_disc_fraction": 1.0,
+   "earth_centre_up_frac": 0.4887165837287351,
+   "sun_el_range": [
+    0.07409880539803881,
+    2.8081321758633466
+   ],
+   "earth_el_range": [
+    -6.445545681282164,
+    6.8174087535666725
+   ]
+  },
+  "pgda_map_at_site": {
+   "sun": [
+    0.7024,
+    0.38324,
+    0.8269200000000001
+   ],
+   "earth": [
+    0.61068,
+    0.27092000000000005,
+    0.6142000000000001
+   ],
+   "note": "2009-07..2013-07 average, any part of the disc; [centre, 3x3 min, 3x3 max]",
+   "roi": 0
+  }
+ }
+}
