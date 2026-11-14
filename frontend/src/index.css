@@ -90,6 +90,17 @@ body {
   max-height: calc(100svh - 32px);
 }
 
+.terrain-site-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: min(28rem, calc(100vw - 32px));
+}
+
+.terrain-site-selector button[aria-pressed='true'] {
+  border-color: #f5b000;
+}
+
 .terrain-hud-actions {
   display: flex;
   gap: 8px;
