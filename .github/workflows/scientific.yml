@@ -16,4 +16,7 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python -B -m unittest discover -s scientific -t . -p 'test*.py'
       - run: python -B scientific/verify_formulas.py --check
+      - run: python -m scientific fetch-kernels
+      - run: python -B terrain/scripts/check_pipeline_spice.py
       - run: python -m scientific build --mission data/mission.example.json
+      - run: python -m scientific validate-frontend

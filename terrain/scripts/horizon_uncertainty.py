@@ -18,6 +18,7 @@ Run: .venv/Scripts/python scripts/horizon_uncertainty.py
 Writes data/derived/validation/horizon_uncertainty.json.
 """
 import json
+import hashlib
 import math
 from pathlib import Path
 
@@ -56,20 +57,30 @@ def main():
     for s in ("01", "04", "07", "11"):
         hz = json.loads((HZ / f"site_{s}.json").read_text())
         with rasterio.open(ERR / f"Site{s}_final_adj_5mpp_toterr.tif") as ds:
-            band = ds.read(1).astype(float)
+            band = ds.read(1, masked=True).astype(float).filled(np.nan)
+            band[band < 0] = np.nan
             ox, oy = stereo_xy(hz["lat_deg"], hz["lon_deg"])
             assert abs(ox - hz["stereo_xy_m"][0]) < 1 and abs(oy - hz["stereo_xy_m"][1]) < 1, "projection mismatch"
             sig_o = float(sample(ds, band, ox, oy)[0])
+            if not np.isfinite(sig_o):
+                raise ValueError(f"Site{s}: missing valid observer height uncertainty.")
             bx, by = stereo_xy(np.array(hz["blocker_lat_deg"], float), np.array(hz["blocker_lon_deg"], float))
             sig_b = sample(ds, band, bx, by)
         d = np.array(hz["blocking_arc_distance_m"], float)
         valid = np.array(hz["valid"], bool)
+        if np.any(valid & (~np.isfinite(d) | (d <= 0))):
+            raise ValueError(f"Site{s}: invalid blocker distance.")
         near = valid & np.isfinite(sig_b)
         far = valid & ~np.isfinite(sig_b)
         sig_h = np.degrees(np.sqrt(sig_b[near] ** 2 + sig_o ** 2) / d[near])
         sens_far = np.degrees(1.0 / d[far])                     # deg per metre of height error
         key = "Site" + s
         out[key] = {
+            "horizon_sha256": hashlib.sha256((HZ / f"site_{s}.json").read_bytes()).hexdigest(),
+            "error_map_sha256": hashlib.sha256((ERR / f"Site{s}_final_adj_5mpp_toterr.tif").read_bytes()).hexdigest(),
+            "method": "independent_height_errors_at_fixed_nominal_blockers_small_angle",
+            "scope": "Valid error-map pixels only; >=100 m medians cover a subset of all azimuths. No full horizon or timing confidence bound.",
+            "physical_event_time_uncertainty_s": None,
             "observer_sigma_z_m": round(sig_o, 3),
             "n_azimuths": int(valid.sum()),
             "frac_blocker_in_5m_tile": round(float(near.sum() / valid.sum()), 3),
@@ -92,10 +103,12 @@ def main():
         o = out[key]
         print(f"{key:6} {sig_o:7.2f} {o['frac_blocker_in_5m_tile']:5.2f} | {pct(sig_h, 50):6.3f} {pct(sig_h, 95):6.3f} "
               f"{pct(sig_h, 100):6.3f} | {o['far_blockers']['median_distance_km']} km, {o['far_blockers']['deg_per_m_height_error_median']}")
-    out["_note"] = ("sigma_h = sqrt(sigma_blocker^2 + sigma_observer^2)/d, small-angle, independent errors; height errors from "
+    out["_note"] = ("sigma_h = sqrt(sigma_blocker^2 + sigma_observer^2)/d, small-angle, independent errors at fixed nominal blockers; "
+                    "the >=100 m medians apply only to the reported subset of azimuths, not the whole horizon or event times. "
+                    "Spatial covariance and blocker changes have not been propagated. Height errors from "
                     "NASA PGDA SiteXX_final_adj_5mpp_toterr.tif (Barker et al. 2021, PSS 203, 105119). Symmetric RMS: does "
                     "not include the upward bias of the horizon described by Barker et al. Far blockers (80/240 m mosaics) "
-                    "have no published error map; only the sensitivity in deg per metre is given.")
+                    "have no error map included in this calculation; only sensitivity in deg per metre is given.")
     OUT.write_text(json.dumps(out, indent=2))
     print("wrote", OUT.relative_to(ROOT))
 

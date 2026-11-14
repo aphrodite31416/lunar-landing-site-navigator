@@ -142,6 +142,9 @@ def analyze_scenario(ephemeris, horizon, vectors_at=None, settings=None, panel=N
     for kind in ("sunlight", "earth", "darkness"):
         windows[kind], found = find_windows(evaluator, times, kind)
         events.extend(found)
+    # Integrate on the same refined samples that bracket detected boundaries.
+    # Include both sides of a transition, not a coarse ramp across a shadow.
+    times = np.unique(np.r_[times, list(evaluator.cache), [event["offset_s"] for event in events]])
     start, end = float(times[0]), float(times[-1])
     windows["joint"] = model.intersect_windows(windows["sunlight"], windows["earth"])
     windows["insufficient_light"] = model.complement_windows(windows["sunlight"], start, end)
@@ -194,6 +197,7 @@ def scenario_json(ephemeris, horizon, result, clock, vector_method, kernel_hashe
         "Events and gaps shorter than the search step can be missed; event tolerance is not physical accuracy.",
         "Earth-centre visibility is geometric availability, not a station-specific radio link budget.",
         "Darkness means no sampled solar-disc point is visible; finite disc sampling has angular error.",
+        "DEM error has not been fully propagated into physical event-time confidence intervals.",
     ]
     if vector_method == "linear_interpolation_of_handoff_vectors":
         warnings.append("Boundary refinement uses linearly interpolated ephemeris vectors.")

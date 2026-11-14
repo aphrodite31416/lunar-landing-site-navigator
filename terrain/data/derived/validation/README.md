@@ -57,7 +57,7 @@ The NASA map counts the % of time *any part* of the disc is visible. Umar's summ
 | Site11 | 85.1% | 89.5% | 70.2% | 72.2% | 82.7% | 82.7% | 70.2% | +14.8 pts |
 
 - The 5-min series brings Umar's numbers down 3–8 pts (the 00:00 samples were biased high), so the gap shrinks from 17–24 to 11–19 pts, but it does not close.
-- Site07 agrees (within the pixel/bilinear range). Site04 is above the 3×3 max but inside the 5×5 (±120 m) range. Site01 and Site11 are still above every NASA value within ±120 m and at every RoI centroid of the site.
+- Site07 is 1.57 percentage points below the bilinear estimate and 3.87 below the nearest pixel; it is outside their range. Site04 is above the 3×3 max but inside the 5×5 (±120 m) spatial range. Site01 and Site11 are still above every NASA value within ±120 m and at every RoI centroid of the site. Spatial ranges are not statistical uncertainty intervals.
 - Site01 (87.8%) is now below the whole-map maximum (88.4%), so it is no longer physically "impossible" for the map, just much brighter than the map says at that spot.
 - The site points fall 2–20 m from the nearest pixel centre, so pixel choice is not the issue.
 - Still open: our 5 m DEM + 1 m observer vs NASA's 60 m DEM (observer height of the map not checked) explains part of it at most; Zarina's `analyze` cross-check is pending.
@@ -74,9 +74,9 @@ The NASA map counts the % of time *any part* of the disc is visible. Umar's summ
 | Site11 | 0.55 m | 39% | 0.25 m | 0.24° / 0.37° | 15% |
 
 - The shares of blockers in the 5 m tile match MaKenna's numbers (56 / 48 / 70 / 38%).
-- **The DEM's height error is the largest error in the horizon**: hundredths to tenths of a degree, against ≤ 0.01° from the azimuth/distance sampling (convergence checks). With the Sun only a few degrees above the horizon at the pole, that is hours in event times.
-- Blockers closer than 100 m (15–36% of azimuths) give σ_h of 0.4–2° with this formula, but there the blocker and the observer share the same interpolation error, so the formula overstates them. These near blockers sit mostly below the horizontal (median horizon −0.3 to −1.7°).
-- Far blockers (80/240 m mosaics, 46–85 km median distance) have no published error map. Sensitivity: 0.0007–0.002° per metre of height error.
+- These DEM error estimates can exceed the measured sampling changes, but are not a complete error budget. The quoted ≥100 m medians cover only 19–34% of all azimuths, with valid pixels in the local error map. Timing sensitivity must be evaluated at each event; no conversion to a universal number of hours is justified.
+- Blockers closer than 100 m (15–36% of azimuths) give σ_h of 0.4–2° with this formula. Positive spatial correlation could reduce the relative-height error, but the covariance has not been measured; the 100 m cutoff does not prove independence beyond it. These near blockers sit mostly below the horizontal (median horizon −0.3 to −1.7°).
+- Blockers without a valid local error-map pixel (80/240 m mosaics, approximately 28–85 km median distance) have no error map included in this calculation. Sensitivity: 0.0007–0.002° per metre of height error.
 - Barker et al. 2021 also show the errors bias the horizon **up** on average (one positive bump along the ray is enough), so illumination with errors is usually worse than nominal. This RMS estimate is symmetric and does not include that bias. A proper propagation would rerun the horizon on NASA's 100 error "clones" per site (also on product 78).
 - Barker et al. 2021, Table 2: at Site01, 1 m above the surface, 2024–2026, the 1st percentile of the RoI-averaged mean illumination over the 100 clones is 67–71% (our point is in their RoI 4: 69.6%). That is NASA's own number with the same 5 m DEM and the same 1 m height, and it is close to the RoI definition (> 70%).
 
@@ -96,7 +96,7 @@ What the NASA map is (checked 2026-11-14): an hourly average over a full ~18.6-y
 - **Umar's numbers are reproduced** to ≤ 0.1 pt by an independent code (different time step, our own SPICE calls).
 - **The period is not the cause**: 4 years vs a full 18.6-year cycle changes the result by 0.2–1.0 pt.
 - **The metric is not the cause**: the mean disc fraction is 3.6–5.4 pts below "any part", and is still 6–14 pts above NASA at Site01/04/11 (and 8 pts below at Site07).
-- So the ephemeris, time span and metric agree; the gap comes from the **terrain/horizon**: our 5 m DEM near the site + 1 m observer vs NASA's 60 m LDEM_85S_060M (observer height not stated on the product page). Barker et al. 2021 show the old LDEM predicts worse illumination than the new 5 m one, and that 1 m vs 5 m of height changes the light a lot. Not yet quantified for our points.
+- These tests reduce the discrepancy attributable to period and metric choices. Terrain/horizon resolution and observer height are plausible remaining causes, but they have not been isolated with matched inputs. The independent calculation uses a horizontal cut at the solar-centre azimuth; it is not the full sampled-disc production pipeline, and the exact NASA simulation start has not been established.
 
 # Real SPICE vs JPL Horizons, all 4 sites (2026-11-14)
 

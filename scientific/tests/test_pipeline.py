@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 from jsonschema import Draft202012Validator
@@ -12,6 +13,8 @@ from scientific.analysis import Evaluator, Settings, analyze_scenario, find_wind
 from scientific.export import build
 from scientific.inputs import Ephemeris, Horizon, load_ephemeris, load_horizon, write_json
 from scientific.ephemeris import KernelPool, SpiceClock
+from scientific.frontend_validation import validate_frontend
+from scientific.inputs import file_hash
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -38,7 +41,11 @@ class DataTests(unittest.TestCase):
             self.assertAlmostEqual(float(horizon(np.deg2rad(359.9))), float(horizon(np.deg2rad(-0.1))))
             for changes in ({"coverage_status": "partial"}, {"valid": [True, False, True, True]},
                             {"valid": [1, 1, 1, 1]}, {"observer_xyz_m": [0, 0, -1737400]},
-                            {"frame": "IAU_MOON"}, {"az_deg": [0, 90, 180, 360]}):
+                            {"frame": "IAU_MOON"}, {"az_deg": [0, 90, 180, 360]},
+                            {"observer_height_m": -1}, {"observer_height_m": True},
+                            {"observer_height_m": 1, "R_m": 1737400, "ground_elevation_m": 0},
+                            {"observer_height_direction": "slope_normal"}, {"angle_units": "rad"},
+                            {"az_convention": "0 = East, counterclockwise"}, {"n_az": 7200}, {"az_step_deg": 45}):
                 write_json(path, {**document, **changes})
                 with self.assertRaises(ValueError):
                     load_horizon(path, data)
@@ -87,6 +94,7 @@ class DataTests(unittest.TestCase):
                         "lat_deg": float(np.rad2deg(lat)), "lon_deg": float(np.rad2deg(lon)),
                         "az_deg": [0, 90, 180, 270], "horizon_deg": [0, 0, 0, 0],
                         "valid": [True] * 4, "test_fixture_only": True,
+                        "observer_height_m": 1.0,
                     })
             output = root / "processed"
             manifest = build(root, output=output, kernel_dir=ROOT / "data/kernels",
@@ -104,10 +112,39 @@ class DataTests(unittest.TestCase):
                 validator.validate(json.loads(scenario.read_text()))
             for alternate in output.glob("sensitivity/*.json"):
                 validator.validate(json.loads(alternate.read_text()))
+            sites = json.loads((output / "sites.json").read_text())["sites"]
+            for site in sites:
+                self.assertEqual(site["observer_height_m"], 1.0)
+                scenario = json.loads((output / site["scenario_url"]).read_text())
+                self.assertEqual(scenario["provenance"]["horizon_sha256"], file_hash(output / site["horizon_url"]))
+            self.assertEqual(validate_frontend(output, ROOT / "schemas/scenario.schema.json")["status"], "pass")
+            sites[0]["observer_height_m"] = 2.0
+            write_json(output / "sites.json", {"sites": sites})
+            with self.assertRaisesRegex(ValueError, "observer height"):
+                validate_frontend(output, ROOT / "schemas/scenario.schema.json")
+            sites[0]["observer_height_m"] = 1.0
+            write_json(output / "sites.json", {"sites": sites})
+            manifest["datasets"][0]["scenarios"][0]["metrics"]["sunlight_s"] += 1
+            write_json(output / "manifest.json", manifest)
+            with self.assertRaisesRegex(ValueError, "manifest summary"):
+                validate_frontend(output, ROOT / "schemas/scenario.schema.json")
 
 
 class SyntheticGeometryTests(unittest.TestCase):
     """Synthetic geometry is confined to tests and never used as a terrain handoff."""
+
+    def test_refinement_samples_prevent_integrating_a_shadow_as_a_coarse_ramp(self):
+        metadata = {"site_id": "site01", "observer_position_xyz_m": [1737400, 0, 0]}
+        eph = Ephemeris(metadata, np.array([0., 10.]), np.ones((2, 3)), np.ones((2, 3)), {})
+        def visibility(sun, *args):
+            fraction = float(sun[0] >= 3.7)
+            return {"sun_fraction": fraction, "terrain_fraction": fraction,
+                    "earth_center_visible": True, "earth_clearance_rad": 1.0}
+        with patch("scientific.analysis.model.solar_visibility", side_effect=visibility):
+            result = analyze_scenario(eph, Horizon({}, np.array([0., 180.]), np.zeros(2), "test"),
+                vectors_at=lambda t: (np.array([t, 0, 0]), np.ones(3)),
+                settings=Settings(event_tolerance_s=0.001))
+        self.assertAlmostEqual(result.metrics["equivalent_full_disc_s"], 6.3, delta=0.002)
 
     def test_detected_boundary_refines_against_new_evaluations(self):
         # A body crosses a flat horizon at t=3.7 s between source epochs 0 and 10.

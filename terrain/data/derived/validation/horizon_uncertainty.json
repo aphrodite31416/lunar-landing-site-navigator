@@ -1,5 +1,10 @@
 {
   "Site01": {
+    "horizon_sha256": "7a3ca70531ef4aabebbb1fbdb0def7d82e51b47521bf1707a962ebc3cdd4cb8e",
+    "error_map_sha256": "cf2cf52f52d2aa51e60d058010d10b0ebfb1d3e920f5a2b9a46eb6c51054ab1c",
+    "method": "independent_height_errors_at_fixed_nominal_blockers_small_angle",
+    "scope": "Valid error-map pixels only; >=100 m medians cover a subset of all azimuths. No full horizon or timing confidence bound.",
+    "physical_event_time_uncertainty_s": null,
     "observer_sigma_z_m": 0.271,
     "n_azimuths": 7200,
     "frac_blocker_in_5m_tile": 0.556,
@@ -34,8 +39,13 @@
     }
   },
   "Site04": {
+    "horizon_sha256": "8bdde2bd749ead1f5216090f996d9a33ec71971dc688df081d4054d9d9da05be",
+    "error_map_sha256": "416c4baa3b64def0182bb3379a1a9228482efd8ce32a39309ea8de5d0330fbe6",
+    "method": "independent_height_errors_at_fixed_nominal_blockers_small_angle",
+    "scope": "Valid error-map pixels only; >=100 m medians cover a subset of all azimuths. No full horizon or timing confidence bound.",
+    "physical_event_time_uncertainty_s": null,
     "observer_sigma_z_m": 0.559,
-    "n_azimuths": 7200,
+    "n_azimuths": 14400,
     "frac_blocker_in_5m_tile": 0.483,
     "blocker_sigma_z_m_in_tile": {
       "median": 0.3551,
@@ -46,7 +56,7 @@
       "min": 14.1
     },
     "horizon_sigma_deg_in_tile": {
-      "median": 0.5955,
+      "median": 0.5944,
       "p95": 2.5515,
       "max": 2.7492,
       "frac_above_0.01": 0.899
@@ -54,20 +64,25 @@
     "horizon_sigma_deg_blocker_lt_100m": {
       "frac_of_azimuths": 0.268,
       "median": 2.0505,
-      "horizon_deg_median": -0.3087
+      "horizon_deg_median": -0.3072
     },
     "horizon_sigma_deg_blocker_ge_100m": {
       "frac_of_azimuths": 0.215,
       "median": 0.0196,
-      "p95": 0.4684
+      "p95": 0.4688
     },
     "far_blockers": {
-      "median_distance_km": 28.472,
+      "median_distance_km": 28.4742,
       "deg_per_m_height_error_median": 0.002,
       "deg_per_m_height_error_max": 0.0066
     }
   },
   "Site07": {
+    "horizon_sha256": "19f223c154890afd44bd37aa7289a342497e828129b2982b118c05750fc36b87",
+    "error_map_sha256": "9be3e4b989ad3164ab5c9036fadab548e5c1c027d056b96f5ef055362c4b1e3e",
+    "method": "independent_height_errors_at_fixed_nominal_blockers_small_angle",
+    "scope": "Valid error-map pixels only; >=100 m medians cover a subset of all azimuths. No full horizon or timing confidence bound.",
+    "physical_event_time_uncertainty_s": null,
     "observer_sigma_z_m": 0.367,
     "n_azimuths": 7200,
     "frac_blocker_in_5m_tile": 0.696,
@@ -102,6 +117,11 @@
     }
   },
   "Site11": {
+    "horizon_sha256": "bd240659c5e574b16dec1759c0f229433478ce0beb0c6951b0bb39a614a99c07",
+    "error_map_sha256": "0d61e972981483fb3022af8e65d052506969a758aa95eb0ebe0478a83ac55e1b",
+    "method": "independent_height_errors_at_fixed_nominal_blockers_small_angle",
+    "scope": "Valid error-map pixels only; >=100 m medians cover a subset of all azimuths. No full horizon or timing confidence bound.",
+    "physical_event_time_uncertainty_s": null,
     "observer_sigma_z_m": 0.546,
     "n_azimuths": 7200,
     "frac_blocker_in_5m_tile": 0.385,
@@ -135,5 +155,5 @@
       "deg_per_m_height_error_max": 0.0033
     }
   },
-  "_note": "sigma_h = sqrt(sigma_blocker^2 + sigma_observer^2)/d, small-angle, independent errors; height errors from NASA PGDA SiteXX_final_adj_5mpp_toterr.tif (Barker et al. 2021, PSS 203, 105119). Symmetric RMS: does not include the upward bias of the horizon described by Barker et al. Far blockers (80/240 m mosaics) have no published error map; only the sensitivity in deg per metre is given."
+  "_note": "sigma_h = sqrt(sigma_blocker^2 + sigma_observer^2)/d, small-angle, independent errors at fixed nominal blockers; the >=100 m medians apply only to the reported subset of azimuths, not the whole horizon or event times. Spatial covariance and blocker changes have not been propagated. Height errors from NASA PGDA SiteXX_final_adj_5mpp_toterr.tif (Barker et al. 2021, PSS 203, 105119). Symmetric RMS: does not include the upward bias of the horizon described by Barker et al. Far blockers (80/240 m mosaics) have no error map included in this calculation; only sensitivity in deg per metre is given."
 }

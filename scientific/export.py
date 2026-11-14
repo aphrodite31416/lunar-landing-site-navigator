@@ -2,6 +2,7 @@
 
 from dataclasses import asdict
 from pathlib import Path
+import shutil
 
 import numpy as np
 
@@ -58,10 +59,13 @@ def build(root, horizons=None, output=None, kernel_dir=None, settings=None, miss
                 horizon = loaded_horizons[site_id]
                 site["latitude_deg"], site["longitude_deg"] = horizon.document["lat_deg"], horizon.document["lon_deg"]
                 site["coordinate_source"] = "horizon_handoff"
+                site["observer_height_m"] = horizon.document.get("observer_height_m")
                 site["terrain_status"] = "ready"
                 site["horizon_url"] = f"horizons/{site_id}.json"
                 site["scenario_url"] = f"scenarios/monthly-2026-11/{site_id}.json"
-                write_json(output / site["horizon_url"], horizon.document)
+                horizon_output = output / site["horizon_url"]
+                horizon_output.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(profiles[site_id], horizon_output)
                 provider = SpiceProvider(ephemeris, clock) if use_spice else ephemeris.vectors_at
                 method = "spice_spkcpo_cn+s" if use_spice else "linear_interpolation_of_handoff_vectors"
                 if use_spice:
