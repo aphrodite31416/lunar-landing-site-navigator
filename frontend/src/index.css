@@ -248,6 +248,63 @@ body {
   margin: 0;
 }
 
+.terrain-track-block {
+  margin-bottom: 8px;
+}
+
+.terrain-track-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.terrain-track {
+  position: relative;
+  height: 12px;
+  margin: 4px 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.terrain-track-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: #f5b000;
+}
+
+.terrain-track-start-clipped {
+  border-left: 3px dashed #16171d;
+}
+
+.terrain-track-end-clipped {
+  border-right: 3px dashed #16171d;
+}
+
+.terrain-track-event,
+.terrain-track-now {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+}
+
+.terrain-track-event {
+  background: #f3f4f6;
+}
+
+.terrain-track-now {
+  background: #c084fc;
+}
+
+.terrain-track-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text);
+  font-size: 13px;
+}
+
 .terrain-note {
   position: absolute;
   left: 16px;

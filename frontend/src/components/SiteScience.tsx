@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { loadScenario } from '../sites/loadScenario'
-import type { Site, TerrainScenario, VisibilitySample } from '../types/science'
+import type { Site, TerrainScenario, VisibilityEvent, VisibilitySample, VisibilityWindow } from '../types/science'
 
 export function SiteScience({ site }: { site: Site }) {
   const [scenario, setScenario] = useState<TerrainScenario | null>(null)
@@ -102,6 +102,7 @@ function Timeline({
       <p className="terrain-science-note">
         Sample {index + 1} of {scenario.series.length}. Each step is one exported sample.
       </p>
+      <WindowTracks scenario={scenario} offsetS={sample.offset_s} />
       <div className="terrain-science-chips">
         <p className={sample.sunlight_available ? 'terrain-chip terrain-chip-on' : 'terrain-chip'}>
           {sample.sunlight_available ? 'Sunlit' : 'Not sunlit'}
@@ -138,6 +139,133 @@ function Timeline({
       </dl>
     </>
   )
+}
+
+function WindowTracks({ scenario, offsetS }: { scenario: TerrainScenario; offsetS: number }) {
+  const duration = scenario.period.duration_s
+  const playhead = duration > 0 ? (offsetS / duration) * 100 : 0
+  const earthEvents = scenario.events.filter((event) => event.kind === 'earth')
+
+  return (
+    <div className="terrain-tracks">
+      <p className="terrain-science-note">
+        Bars come from the window list. A clipped end touches this month's edge, so the real start or end may lie
+        outside it.
+      </p>
+      <WindowTrack name="Sunlight" windows={scenario.windows.sunlight} duration={duration} playhead={playhead} />
+      <WindowTrack
+        name="Earth"
+        windows={scenario.windows.earth}
+        duration={duration}
+        playhead={playhead}
+        events={earthEvents}
+      />
+      <WindowTrack name="Joint" windows={scenario.windows.joint} duration={duration} playhead={playhead} />
+      <WindowTrack name="Darkness" windows={scenario.windows.darkness} duration={duration} playhead={playhead} />
+      <WindowTrack
+        name="Insufficient light"
+        windows={scenario.windows.insufficient_light}
+        duration={duration}
+        playhead={playhead}
+      />
+      <EarthEvents events={earthEvents} />
+    </div>
+  )
+}
+
+function WindowTrack({
+  name,
+  windows,
+  duration,
+  playhead,
+  events = [],
+}: {
+  name: string
+  windows: VisibilityWindow[]
+  duration: number
+  playhead: number
+  events?: VisibilityEvent[]
+}) {
+  return (
+    <div className="terrain-track-block">
+      <p className="terrain-track-name">{name}</p>
+      {windows.length === 0 ? (
+        <p className="terrain-science-note">None in this period.</p>
+      ) : (
+        <>
+          <div className="terrain-track" aria-hidden="true">
+            {windows.map((window) => (
+              <span
+                key={`${window.start_offset_s}-${window.end_offset_s}`}
+                className={windowClass(window)}
+                style={windowStyle(window, duration)}
+              />
+            ))}
+            {events.map((event) => (
+              <span
+                key={event.offset_s}
+                className="terrain-track-event"
+                style={{ left: `${percent(event.offset_s, duration)}%` }}
+              />
+            ))}
+            <span className="terrain-track-now" style={{ left: `${playhead}%` }} />
+          </div>
+          <ul className="terrain-track-list">
+            {windows.map((window) => (
+              <li key={`${window.start_utc}-${window.end_utc}`}>
+                {formatUtc(window.start_utc)} – {formatUtc(window.end_utc)}
+                {clipLabel(window)}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  )
+}
+
+function EarthEvents({ events }: { events: VisibilityEvent[] }) {
+  return (
+    <div className="terrain-track-block">
+      <p className="terrain-track-name">Earth events</p>
+      {events.length === 0 ? (
+        <p className="terrain-science-note">No Earth event was found in this period.</p>
+      ) : (
+        <ul className="terrain-track-list">
+          {events.map((event) => (
+            <li key={event.offset_s}>
+              {formatUtc(event.utc)} · {event.active_after ? 'Earth visible after this time' : 'Earth not visible after this time'}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+function windowClass(window: VisibilityWindow) {
+  const classes = ['terrain-track-window']
+  if (window.start_clipped) classes.push('terrain-track-start-clipped')
+  if (window.end_clipped) classes.push('terrain-track-end-clipped')
+  return classes.join(' ')
+}
+
+function windowStyle(window: VisibilityWindow, duration: number) {
+  const left = percent(window.start_offset_s, duration)
+  const end = percent(window.end_offset_s, duration)
+  return { left: `${left}%`, width: `${Math.max(end - left, 0)}%` }
+}
+
+function percent(offsetS: number, duration: number) {
+  if (duration <= 0) return 0
+  return (offsetS / duration) * 100
+}
+
+function clipLabel(window: VisibilityWindow) {
+  if (window.start_clipped && window.end_clipped) return ' · clipped at both ends'
+  if (window.start_clipped) return ' · start clipped'
+  if (window.end_clipped) return ' · end clipped'
+  return ''
 }
 
 function formatUtc(utc: string) {
