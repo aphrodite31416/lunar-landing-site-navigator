@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "site_id": "site07",
+  "name": "Peak near Shackleton (Site07)",
+  "height_png": "site_07_height.png",
+  "hillshade_png": "site_07_hillshade.png",
+  "width_px": 1024,
+  "height_px": 1024,
+  "pixel_m": 15.625,
+  "width_m": 16000.0,
+  "height_m": 16000.0,
+  "crs": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400",
+  "x_range_m": [
+    22000.0,
+    38000.0
+  ],
+  "y_range_m": [
+    -28000.0,
+    -12000.0
+  ],
+  "center_xy_m": [
+    30000.0,
+    -20000.0
+  ],
+  "row0": "top = max y",
+  "pixel_origin": "corner of the top-left pixel (pixel centres at +0.5)",
+  "elevation": {
+    "units": "m",
+    "reference": "height above the 1737.4 km sphere",
+    "png_bits": 16,
+    "zmin_m": -417.623,
+    "zmax_m": 1648.535,
+    "decode": "z = zmin_m + DN / 65535 * (zmax_m - zmin_m)",
+    "nodata_dn": null,
+    "nodata_rule": "if not null, DN = nodata_dn means no data and valid DN run 1..65535"
+  },
+  "north": {
+    "rule": "local north points away from the pole; clockwise angle from image up = longitude",
+    "pole_px": [
+      -1408.0,
+      -768.0
+    ],
+    "north_at_site_deg": 123.777
+  },
+  "site": {
+    "lat_deg": -88.80737,
+    "lon_deg": 123.7767,
+    "xy_m": [
+      30061.4,
+      -20106.7
+    ],
+    "px": [
+      515.932,
+      518.827
+    ],
+    "scene_xyz_m": [
+      61.4,
+      1648.36,
+      106.7
+    ],
+    "ground_elevation_m": 1648.36
+  },
+  "scene": {
+    "up": "Y",
+    "x": "x - center_x",
+    "y": "z",
+    "z": "-(y - center_y)"
+  },
+  "vertical_exaggeration_in_data": 1,
+  "visual_only": [
+    "hillshade_png"
+  ],
+  "hillshade": {
+    "sun_azimuth_deg": 315.0,
+    "sun_altitude_deg": 45.0,
+    "note": "synthetic light for texture, not the real Sun"
+  },
+  "source": "LOLA 5 m, PGDA Site07_final_adj_5mpp_surf.tif, resampled 3200 -> 1024 by mean",
+  "generated_utc": "2026-11-07T21:11:44Z"
+}
