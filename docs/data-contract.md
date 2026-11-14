@@ -58,11 +58,19 @@ means full terrain analyses are incomplete. Missing scenario/horizon URLs are
 `null`, not links to synthetic profiles. Geometry files have kind `body_positions`
 and `terrain_applied: false`; their elevations alone do not indicate visibility.
 
+`observer_height_m` is populated from each supplied horizon (1 m for all four
+sites). Horizon arrays have their own `az_deg` and `n_az`: Site04's refined
+profile has 14,400 directions; the other sites have 7,200. Read the actual
+array and interpolate periodically instead of assuming a fixed length.
+
 ## Units and coordinates
 
 - Angles: degrees. Azimuth is clockwise from north: 0° north, 90° east.
 - Positions: metres in `MOON_ME_DE421`; latitude is planetocentric and east
   longitude is positive. Site height is fixed by the supplied observer XYZ.
+  All four supplied horizons use a 1 m radial observer height; `sites.json`
+  reads that value from the horizon metadata. The README's 2 m examples are
+  illustrative and do not change these observers.
 - Durations and offsets: seconds. `offset_s` is elapsed ET seconds, not Unix time.
 - Timestamps: UTC ISO 8601, converted with SPICE; no browser time zone is applied.
 - Fractions: 0 through 1. Convert to percentages only when displaying them.
@@ -87,6 +95,12 @@ Every interval contains UTC/offset boundaries, its duration, and `start_clipped`
 and `end_clipped`. A clipped interval continues to the edge of the analysis data;
 its actual start or end may lie outside the loaded period. Durations are measured
 over the analysis period. Boundaries have finite numerical and model error.
+
+Use the explicit period fields for labels: `monthly-2026-11` covers
+2026-11-14 through 2026-12-14 UTC, not calendar November. Refined samples around
+events are included in the exported timeline and integration; do not assume
+every adjacent sample is the same number of seconds apart. The numerical
+event tolerance is not a physical accuracy guarantee.
 
 For sky rendering, compare the body's elevation with its horizon elevation and
 render the finite solar disc. At zenith/nadir, azimuth and the displayed horizon

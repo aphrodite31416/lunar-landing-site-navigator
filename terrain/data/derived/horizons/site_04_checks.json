@@ -1,26 +1,31 @@
 {
-  "azimuth_0.025_vs_0.05": {
-    "n": 7200,
-    "max_abs_deg": 0.0104,
-    "p99_abs_deg": 0.002,
-    "p95_abs_deg": 0.001,
-    "mean_abs_deg": 0.00025,
-    "frac_above_0.01_deg": 0.0003,
-    "az_of_max_deg": 43.275,
-    "seconds": 47
+  "azimuth_0.0125_vs_0.025": {
+    "n": 14400,
+    "max_abs_deg": 0.0064,
+    "p99_abs_deg": 0.0009,
+    "p95_abs_deg": 0.0005,
+    "mean_abs_deg": 0.00011,
+    "frac_above_0.01_deg": 0.0,
+    "n_above_0.01_deg": 0,
+    "az_of_max_deg": 42.013,
+    "seconds": 80
   },
   "distance_half_steps": {
-    "samples_per_azimuth": 28900,
-    "max_abs_deg": 0.0033,
-    "p99_abs_deg": 0.0009,
-    "mean_abs_deg": 4e-05,
+    "samples_per_azimuth": 57800,
+    "max_abs_deg": 0.0058,
+    "p99_abs_deg": 0.0005,
+    "mean_abs_deg": 2e-05,
     "frac_above_0.01_deg": 0.0,
-    "az_of_max_deg": 191.85,
-    "seconds": 95
+    "n_above_0.01_deg": 0,
+    "az_of_max_deg": 191.88,
+    "seconds": 165
   },
   "smooth_sphere": {
     "expected_deg": -0.06144,
     "got_min_deg": -0.06144,
     "got_max_deg": -0.06144
-  }
+  },
+  "target_deg": 0.01,
+  "pass": true,
+  "horizon_sha256": "8bdde2bd749ead1f5216090f996d9a33ec71971dc688df081d4054d9d9da05be"
 }

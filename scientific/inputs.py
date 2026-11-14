@@ -11,6 +11,7 @@ from . import mini_model as model
 
 SITE_IDS = ("site01", "site04", "site07", "site11")
 FRAME = "MOON_ME_DE421"
+AZIMUTH_CONVENTION = "0 = local North, 90 = East (clockwise); horizontal plane perpendicular to the radial vertical"
 
 
 def file_hash(path):
@@ -131,6 +132,18 @@ def load_horizon(path, ephemeris):
         if doc.get(key) != expected:
             raise ValueError(f"{Path(path).name}: {key} must be {expected!r}.")
     observer = finite_array(doc["observer_xyz_m"], "horizon observer", (3,))
+    for key, expected in {"angle_units": "deg", "az_convention": AZIMUTH_CONVENTION,
+                          "observer_height_direction": "radial"}.items():
+        if key in doc and doc[key] != expected:
+            raise ValueError(f"{Path(path).name}: unsupported {key}: {doc[key]!r}.")
+    if "observer_height_m" in doc:
+        height = doc["observer_height_m"]
+        if isinstance(height, bool) or not isinstance(height, (int, float)) or not np.isfinite(height) or height < 0:
+            raise ValueError("Observer height must be a finite nonnegative number in metres.")
+        if "R_m" in doc and "ground_elevation_m" in doc:
+            radius = float(doc["R_m"]) + float(doc["ground_elevation_m"]) + height
+            if not np.isfinite(radius) or abs(radius - np.linalg.norm(observer)) > 0.02:
+                raise ValueError("Observer height and ground elevation disagree with observer XYZ.")
     if not np.allclose(observer, ephemeris.observer_m, rtol=0, atol=0.02):
         raise ValueError("Horizon and ephemeris must use the same observer position (within 2 cm).")
     lat, lon = float(doc["lat_deg"]), float(doc["lon_deg"])
@@ -147,6 +160,12 @@ def load_horizon(path, ephemeris):
         raise ValueError("Every horizon direction must have an explicit true validity flag.")
     if np.any((az < 0) | (az >= 360)) or np.any(np.diff(az) <= 0) or np.any(np.abs(el) > 90):
         raise ValueError("Use sorted distinct azimuths in [0,360) and elevations in [-90,90].")
+    if "n_az" in doc and doc["n_az"] != len(az):
+        raise ValueError("Horizon direction count disagrees with n_az.")
+    if "az_step_deg" in doc:
+        step = float(doc["az_step_deg"])
+        if not np.isfinite(step) or step <= 0 or not np.allclose(np.diff(np.r_[az, az[0] + 360]), step, rtol=0, atol=1e-6):
+            raise ValueError("Horizon azimuths disagree with the declared periodic sampling step.")
     return Horizon(doc, az, el, file_hash(path))
 
 

@@ -130,6 +130,28 @@ The report compares the baseline, half the time step, and twice the solar-disc
 sample count. It records event counts, boundary shifts, metric differences,
 runtime, and evaluation counts. It does not prove completeness of the event set.
 
+The corrected frontend handoff uses the existing settings with 4,096 disc
+samples and a 150 s maximum search step, recomputed with real SPICE. Validation
+reports under `data/processed/validation/` compare each site at 75 s and 8,192
+disc samples. The TypeScript interfaces and scenario schema remain unchanged.
+All four site manifests now carry the horizon's 1 m observer height.
+
+```sh
+.venv/bin/python -m scientific build --spice --disc-samples 4096 --search-step-s 150 --require-terrain --mission data/mission.example.json
+.venv/bin/python -m scientific validate-handoff
+.venv/bin/python -m scientific validate-frontend
+.venv/bin/python -m scientific sync-frontend
+```
+
+`validate-frontend` checks the four sites, heights, linked files, horizon hashes,
+3D marker positions, time bounds, window durations and metrics before ready
+outputs are copied. Horizon files are copied byte-for-byte so the recorded
+input hash identifies the delivered file too. Refined transition samples are
+included in the existing `series` for integration; its spacing can be nonuniform.
+Threshold and ±0.01° sensitivity comparisons are separate validation artifacts
+in `terrain/data/derived/validation/monthly_sensitivity.json`, not new frontend
+fields. Physical timing confidence bounds remain unquantified.
+
 Optional `--sensitivity-margin-deg VALUE` also runs uniformly lowered and raised
 horizons and exports separate planners. This is an explicitly chosen sensitivity
 scenario, not a statistical confidence interval. No angular uncertainty is

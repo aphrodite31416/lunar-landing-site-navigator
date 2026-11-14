@@ -12,6 +12,7 @@ from .inputs import SITE_IDS, read_json, write_json
 from .planner import Mission
 from .ephemeris import fetch_kernels
 from .validation import convergence_report, validate_handoffs
+from .frontend_validation import validate_frontend
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -44,9 +45,14 @@ def main(argv=None):
     converge.add_argument("--kernel-dir", type=Path, default=ROOT / "data/kernels")
     converge.add_argument("--output", type=Path, default=ROOT / "data/processed/convergence.json")
     converge.add_argument("--spice", action="store_true")
+    converge.add_argument("--disc-samples", type=int, default=512)
+    converge.add_argument("--search-step-s", type=float, default=300)
     sync = commands.add_parser("sync-frontend", help="Copy generated JSON into Vite's public/data directory.")
     sync.add_argument("--source", type=Path, default=ROOT / "data/processed")
     sync.add_argument("--destination", type=Path, default=ROOT / "frontend/public/data")
+    frontend_check = commands.add_parser("validate-frontend", help="Check the complete four-site JSON/terrain handoff.")
+    frontend_check.add_argument("--source", type=Path, default=ROOT / "data/processed")
+    frontend_check.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
     try:
         if args.command == "fetch-kernels":
@@ -57,13 +63,22 @@ def main(argv=None):
             print(json.dumps({"status": report["status"], "output": str(args.output)}))
             return 0 if report["status"] == "pass" else 1
         elif args.command == "convergence":
-            report = convergence_report(ROOT, args.kernel_dir, args.horizons, args.site, use_spice=args.spice)
+            report = convergence_report(ROOT, args.kernel_dir, args.horizons, args.site,
+                                        settings=Settings(disc_samples=args.disc_samples, search_max_step_s=args.search_step_s),
+                                        use_spice=args.spice)
             write_json(args.output, report)
             print(f"Convergence report: {args.output}")
         elif args.command == "sync-frontend":
-            read_json(args.source / "manifest.json")
+            manifest = read_json(args.source / "manifest.json")
+            if manifest["status"] == "ready":
+                validate_frontend(args.source, ROOT / "schemas/scenario.schema.json")
             shutil.copytree(args.source, args.destination, dirs_exist_ok=True)
             print(f"Frontend data: {args.destination}")
+        elif args.command == "validate-frontend":
+            report = validate_frontend(args.source, ROOT / "schemas/scenario.schema.json")
+            if args.output:
+                write_json(args.output, report)
+            print(json.dumps(report))
         else:
             settings = Settings(args.sun_threshold, args.disc_samples, args.search_step_s, args.event_tolerance_s)
             mission = Mission(**read_json(args.mission)) if args.mission else Mission()

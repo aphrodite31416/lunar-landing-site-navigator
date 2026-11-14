@@ -32,8 +32,14 @@ def main():
     ref = json.loads(REF.read_text())
     kernels = [REPO / "data" / "kernels" / k for k in KERNEL_URLS]
     worst = 0.0
+    comparisons = 0
     with KernelPool(kernels):
         for s in ("01", "04", "07", "11"):
+            expected = {(epoch, target) for epoch in ("2026-11-14 00:00", "2026-11-20 06:00", "2026-12-01 12:00",
+                                                      "2027-03-15 18:00", "2027-06-21 00:00") for target in ("SUN", "EARTH")}
+            rows = ref[f"Site{s}"]
+            if len(rows) != 10 or {(row["epoch_utc"], row["target"]) for row in rows} != expected:
+                raise SystemExit(f"FAIL: Site{s} reference must contain both bodies at all five epochs")
             hz = json.loads((HZ / f"site_{s}.json").read_text())
             obs = np.array(hz["observer_xyz_m"])
             basis = mm.local_basis(math.radians(hz["lat_deg"]), math.radians(hz["lon_deg"]))
@@ -43,13 +49,16 @@ def main():
                 az, el = (math.degrees(float(x)) for x in mm.azimuth_elevation(v, basis))
                 daz = (az - row["horizons_az"] + 180) % 360 - 180
                 d = max(abs(el - row["horizons_el"]), abs(daz) * math.cos(math.radians(el)))
+                if not np.isfinite([az, el, row["horizons_az"], row["horizons_el"], d]).all():
+                    raise SystemExit("FAIL: non-finite SPICE/Horizons comparison")
+                comparisons += 1
                 worst = max(worst, d)
                 print(f"Site{s} {row['epoch_utc']} {row['target']:5} az {az:9.5f} (Horizons {row['horizons_az']:9.5f}) "
                       f"el {el:8.5f} (Horizons {row['horizons_el']:8.5f})")
     print(f"max |pipeline - Horizons| = {worst:.6f} deg")
-    if worst > 0.001:
-        raise SystemExit("FAIL: pipeline SPICE disagrees with JPL Horizons by more than 0.001 deg")
-    print("OK")
+    if worst > 0.00002:
+        raise SystemExit("FAIL: pipeline SPICE disagrees with JPL Horizons by more than 0.00002 deg")
+    print(f"OK: {comparisons} comparisons")
 
 
 if __name__ == "__main__":

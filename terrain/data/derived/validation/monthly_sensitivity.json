@@ -1,0 +1,372 @@
+{
+  "period": {
+    "start_utc": "2026-11-14T00:00:00Z",
+    "end_utc": "2026-12-14T00:00:00Z"
+  },
+  "settings": {
+    "disc_samples": 1024,
+    "search_max_step_s": 150,
+    "minimum_sun_fraction": 0.8
+  },
+  "interpretation": "Validation experiment only. Uniform +/-0.01 degree horizon shift; not physical DEM confidence bounds. Does not change the frontend contract.",
+  "sites": {
+    "site01": {
+      "provenance": {
+        "input_sha256": {
+          "ephemeris_site01.json": "975b59cd692a1073d0e490937af9217fc71348096302c2bc36f61ecbf52126d4",
+          "ephemeris_site01.npz": "32b5b3bd3404b85332e92418ef055fd75de0558afb70f37edd7e100da17ad86a"
+        },
+        "horizon_sha256": "7a3ca70531ef4aabebbb1fbdb0def7d82e51b47521bf1707a962ebc3cdd4cb8e",
+        "kernel_sha256": {
+          "naif0012.tls": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+          "de421.bsp": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3",
+          "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+          "moon_pa_de421_1900-2050.bpc": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+          "moon_080317.tf": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993"
+        }
+      },
+      "sunlight_thresholds": [
+        {
+          "minimum_sun_fraction": 0.0,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.5,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.8,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        }
+      ],
+      "sensitivity": {
+        "lower": {
+          "sunlight": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          },
+          "earth": {
+            "baseline_count": 3,
+            "variant_count": 3,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              -563.6718751506705,
+              494.53125013178214,
+              -591.7968751573935
+            ],
+            "max_abs_shift_s": 591.7968751573935
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        },
+        "higher": {
+          "sunlight": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          },
+          "earth": {
+            "baseline_count": 3,
+            "variant_count": 3,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              564.2578126508452,
+              -494.5312501322478,
+              581.8359376555309
+            ],
+            "max_abs_shift_s": 581.8359376555309
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        }
+      }
+    },
+    "site04": {
+      "provenance": {
+        "input_sha256": {
+          "ephemeris_site04.json": "14a19ac5422da857e595322bbf5481b7a5b9466377db408c5efa661f7467bb7a",
+          "ephemeris_site04.npz": "a4b2a94aa87fb2d3013fdfa5d4e680cbfa696a6bce4385598c42930f9a9cbe97"
+        },
+        "horizon_sha256": "8bdde2bd749ead1f5216090f996d9a33ec71971dc688df081d4054d9d9da05be",
+        "kernel_sha256": {
+          "naif0012.tls": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+          "de421.bsp": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3",
+          "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+          "moon_pa_de421_1900-2050.bpc": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+          "moon_080317.tf": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993"
+        }
+      },
+      "sunlight_thresholds": [
+        {
+          "minimum_sun_fraction": 0.0,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.5,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.8,
+          "sunlight_s": 2553862.50068265,
+          "sunlight_time_fraction": 0.9852864583333333
+        }
+      ],
+      "sensitivity": {
+        "lower": {
+          "sunlight": {
+            "baseline_count": 2,
+            "variant_count": 2,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              388.4765626039589,
+              -2275.78125060827
+            ],
+            "max_abs_shift_s": 2275.78125060827
+          },
+          "earth": {
+            "baseline_count": 2,
+            "variant_count": 2,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              -587.6953126571025,
+              537.8906251434237
+            ],
+            "max_abs_shift_s": 587.6953126571025
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        },
+        "higher": {
+          "sunlight": {
+            "baseline_count": 2,
+            "variant_count": 2,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              -388.47656260384247,
+              2256.445313103148
+            ],
+            "max_abs_shift_s": 2256.445313103148
+          },
+          "earth": {
+            "baseline_count": 2,
+            "variant_count": 2,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              587.6953126571607,
+              -538.476562644355
+            ],
+            "max_abs_shift_s": 587.6953126571607
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        }
+      }
+    },
+    "site07": {
+      "provenance": {
+        "input_sha256": {
+          "ephemeris_site07.json": "dcfda70b601dde1d27f4232a34090fa5c560ce36c9e41aed272dcc9ba3946002",
+          "ephemeris_site07.npz": "d2404deba113671d4a6678a99720b266894ba42bc77a3baa51ebf8d779b9e2c8"
+        },
+        "horizon_sha256": "19f223c154890afd44bd37aa7289a342497e828129b2982b118c05750fc36b87",
+        "kernel_sha256": {
+          "naif0012.tls": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+          "de421.bsp": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3",
+          "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+          "moon_pa_de421_1900-2050.bpc": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+          "moon_080317.tf": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993"
+        }
+      },
+      "sunlight_thresholds": [
+        {
+          "minimum_sun_fraction": 0.0,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.5,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.8,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        }
+      ],
+      "sensitivity": {
+        "lower": {
+          "sunlight": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          },
+          "earth": {
+            "baseline_count": 2,
+            "variant_count": 2,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              -619.3359376656008,
+              527.9296876410954
+            ],
+            "max_abs_shift_s": 619.3359376656008
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        },
+        "higher": {
+          "sunlight": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          },
+          "earth": {
+            "baseline_count": 2,
+            "variant_count": 2,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              619.3359376654844,
+              -528.515625141561
+            ],
+            "max_abs_shift_s": 619.3359376654844
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        }
+      }
+    },
+    "site11": {
+      "provenance": {
+        "input_sha256": {
+          "ephemeris_site11.json": "a49a890378eb8f2fd292dca90cd0e66b097d1f02376bc859dd9fb9ee54abe568",
+          "ephemeris_site11.npz": "c0b60f3d9df5fce6f4b585f9dc831759d4f51e66264cb2b38758c2e99a31ad2c"
+        },
+        "horizon_sha256": "bd240659c5e574b16dec1759c0f229433478ce0beb0c6951b0bb39a614a99c07",
+        "kernel_sha256": {
+          "naif0012.tls": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+          "de421.bsp": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3",
+          "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+          "moon_pa_de421_1900-2050.bpc": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+          "moon_080317.tf": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993"
+        }
+      },
+      "sunlight_thresholds": [
+        {
+          "minimum_sun_fraction": 0.0,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.5,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        },
+        {
+          "minimum_sun_fraction": 0.8,
+          "sunlight_s": 2592000.0006928444,
+          "sunlight_time_fraction": 1.0
+        }
+      ],
+      "sensitivity": {
+        "lower": {
+          "sunlight": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          },
+          "earth": {
+            "baseline_count": 3,
+            "variant_count": 3,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              -530.2734376417357,
+              560.1562501494773,
+              -563.0859376508743
+            ],
+            "max_abs_shift_s": 563.0859376508743
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        },
+        "higher": {
+          "sunlight": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          },
+          "earth": {
+            "baseline_count": 3,
+            "variant_count": 3,
+            "same_transition_pattern": true,
+            "event_shifts_s": [
+              530.2734376417357,
+              -559.5703126494773,
+              563.0859376508743
+            ],
+            "max_abs_shift_s": 563.0859376508743
+          },
+          "darkness": {
+            "baseline_count": 0,
+            "variant_count": 0,
+            "same_transition_pattern": true,
+            "event_shifts_s": [],
+            "max_abs_shift_s": null
+          }
+        }
+      }
+    }
+  }
+}

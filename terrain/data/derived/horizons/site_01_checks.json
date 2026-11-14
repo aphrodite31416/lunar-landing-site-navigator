@@ -1,13 +1,14 @@
 {
   "azimuth_0.025_vs_0.05": {
     "n": 7200,
-    "max_abs_deg": 0.0051,
+    "max_abs_deg": 0.005,
     "p99_abs_deg": 0.0013,
     "p95_abs_deg": 0.0006,
     "mean_abs_deg": 0.00015,
     "frac_above_0.01_deg": 0.0,
+    "n_above_0.01_deg": 0,
     "az_of_max_deg": 103.175,
-    "seconds": 51
+    "seconds": 18
   },
   "distance_half_steps": {
     "samples_per_azimuth": 28933,
@@ -15,12 +16,16 @@
     "p99_abs_deg": 0.0006,
     "mean_abs_deg": 3e-05,
     "frac_above_0.01_deg": 0.0,
+    "n_above_0.01_deg": 0,
     "az_of_max_deg": 301.1,
-    "seconds": 101
+    "seconds": 37
   },
   "smooth_sphere": {
     "expected_deg": -0.06144,
     "got_min_deg": -0.06144,
     "got_max_deg": -0.06144
-  }
+  },
+  "target_deg": 0.01,
+  "pass": true,
+  "horizon_sha256": "7a3ca70531ef4aabebbb1fbdb0def7d82e51b47521bf1707a962ebc3cdd4cb8e"
 }

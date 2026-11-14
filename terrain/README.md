@@ -44,4 +44,4 @@ The DEMs are not in git. The two mosaics are 189 and 219 MB, over GitHub's 100 M
 - Rays follow great circles. The elevation angle uses the exact formula from Zarina's README §8.3: β = atan2(r·cosψ − r_o, r·sinψ).
 - Search limit: Zarina's §9.1, with r_min = R − 9229 m and r_max = R + 10 892 m. Those are the global LOLA extremes (Smith et al. 2017, Icarus 283) plus 100 m.
 - Steps: 2.5 m out to 15 km, 40 m out to 300 km, then 120 m. The peaks along each ray are refined.
-- Convergence on Site01: azimuth 0.025° vs 0.05° gives max 0.0051°; half the distance step gives max 0.0013°.
+- Convergence passes 0.01° on all four supplied profiles; the check files include their horizon hashes. Site04 uses 0.025° rays and half the default distance steps (1.25 / 20 / 60 m), checked again at half those spacings: max 0.0064° in azimuth and 0.0058° in distance. Other sites retain 0.05° rays and the default distance steps. See `data/derived/horizons/README.md` for all results.

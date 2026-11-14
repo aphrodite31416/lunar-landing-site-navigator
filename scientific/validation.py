@@ -1,6 +1,6 @@
 """Measured consistency and convergence reports; never infer accuracy from a solver tolerance."""
 
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 from time import perf_counter
 
@@ -83,6 +83,7 @@ def convergence_report(root, kernel_dir, horizon_dir, site_id, settings=None, us
     return {"schema_version": "1.0", "kind": "convergence_report", "site_id": site_id,
             "comparisons": comparisons,
             "runs": {name: {"elapsed_s": timings[name], "evaluation_count": row.evaluation_count,
+                             "settings": asdict(row.settings),
                              "exported_sample_count": len(row.times_s), "metrics": row.metrics}
                      for name, row in results.items()},
             "provenance": {"input_sha256": ephemeris.hashes, "horizon_sha256": horizon.sha256,
