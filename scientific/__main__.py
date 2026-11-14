@@ -12,7 +12,7 @@ from .inputs import SITE_IDS, read_json, write_json
 from .planner import Mission
 from .ephemeris import fetch_kernels
 from .validation import convergence_report, validate_handoffs
-from .frontend_validation import validate_frontend
+from .frontend_validation import terrain_asset_names, validate_frontend, validate_terrain_assets
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -47,11 +47,13 @@ def main(argv=None):
     converge.add_argument("--spice", action="store_true")
     converge.add_argument("--disc-samples", type=int, default=512)
     converge.add_argument("--search-step-s", type=float, default=300)
-    sync = commands.add_parser("sync-frontend", help="Copy generated JSON into Vite's public/data directory.")
+    sync = commands.add_parser("sync-frontend", help="Copy generated JSON and 3D terrain assets into Vite's public/data.")
     sync.add_argument("--source", type=Path, default=ROOT / "data/processed")
+    sync.add_argument("--terrain-source", type=Path, default=ROOT / "data/terrain")
     sync.add_argument("--destination", type=Path, default=ROOT / "frontend/public/data")
     frontend_check = commands.add_parser("validate-frontend", help="Check the complete four-site JSON/terrain handoff.")
     frontend_check.add_argument("--source", type=Path, default=ROOT / "data/processed")
+    frontend_check.add_argument("--terrain-source", type=Path, default=ROOT / "data/terrain")
     frontend_check.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
     try:
@@ -72,10 +74,16 @@ def main(argv=None):
             manifest = read_json(args.source / "manifest.json")
             if manifest["status"] == "ready":
                 validate_frontend(args.source, ROOT / "schemas/scenario.schema.json")
+            names = terrain_asset_names(args.terrain_source)
             shutil.copytree(args.source, args.destination, dirs_exist_ok=True)
-            print(f"Frontend data: {args.destination}")
+            terrain = args.destination / "terrain"
+            terrain.mkdir(parents=True, exist_ok=True)
+            for name in names:
+                shutil.copy2(args.terrain_source / name, terrain / name)
+            print(f"Frontend data: {args.destination} (terrain: {len(names)} files in {terrain})")
         elif args.command == "validate-frontend":
             report = validate_frontend(args.source, ROOT / "schemas/scenario.schema.json")
+            report["terrain_assets"] = validate_terrain_assets(args.terrain_source)
             if args.output:
                 write_json(args.output, report)
             print(json.dumps(report))

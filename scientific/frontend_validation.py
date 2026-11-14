@@ -2,11 +2,58 @@
 
 from pathlib import Path
 from datetime import datetime
+import struct
 
 import numpy as np
 from jsonschema import Draft202012Validator
 
 from .inputs import SITE_IDS, file_hash, read_json
+
+
+PNG_SIGNATURE = bytes.fromhex("89504e470d0a1a0a")
+
+
+def png_header(path):
+    """Width, height, bit depth and colour type from a PNG's IHDR chunk (no image library needed)."""
+    with open(path, "rb") as stream:
+        head = stream.read(26)
+    if len(head) < 26 or head[:8] != PNG_SIGNATURE or head[12:16] != b"IHDR":
+        raise ValueError(f"{Path(path).name}: not a PNG file.")
+    return struct.unpack(">IIBB", head[16:26])
+
+
+def terrain_files(site_id):
+    """Terrain metadata file name for a site id: site04 -> site_04_terrain.json."""
+    return f"site_{site_id[4:]}_terrain.json"
+
+
+def validate_terrain_assets(directory):
+    """Check the 3D terrain handoff (heightmap, hillshade and metadata) for all four sites."""
+    directory, rows = Path(directory), []
+    for site_id in SITE_IDS:
+        meta = read_json(directory / terrain_files(site_id))
+        if meta["site_id"] != site_id:
+            raise ValueError(f"{site_id}: terrain metadata belongs to another site.")
+        size = (meta["width_px"], meta["height_px"])
+        for key, bits in (("height_png", meta["elevation"]["png_bits"]), ("hillshade_png", 8)):
+            name = meta[key]
+            if Path(name).name != name or not (directory / name).is_file():
+                raise ValueError(f"{site_id}: {key} must name a file next to the terrain metadata.")
+            width, height, depth, colour = png_header(directory / name)
+            if (width, height) != size or depth != bits or colour != 0:
+                raise ValueError(f"{site_id}: {name} is {width}x{height}, {depth}-bit, colour type {colour}; "
+                                 f"expected {size[0]}x{size[1]} {bits}-bit grayscale.")
+        if not meta["elevation"]["zmin_m"] < meta["elevation"]["zmax_m"]:
+            raise ValueError(f"{site_id}: invalid terrain elevation range.")
+        rows.append({"site_id": site_id, "metadata": terrain_files(site_id), "height_png": meta["height_png"],
+                     "hillshade_png": meta["hillshade_png"], "size_px": list(size)})
+    return {"status": "pass", "kind": "terrain_assets_report", "sites": rows}
+
+
+def terrain_asset_names(directory):
+    """Every file the frontend needs from the terrain directory, after validation."""
+    report = validate_terrain_assets(directory)
+    return [name for row in report["sites"] for name in (row["metadata"], row["height_png"], row["hillshade_png"])]
 
 
 def validate_frontend(directory, schema_path):

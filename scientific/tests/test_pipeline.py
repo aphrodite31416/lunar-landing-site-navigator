@@ -13,7 +13,8 @@ from scientific.analysis import Evaluator, Settings, analyze_scenario, find_wind
 from scientific.export import build
 from scientific.inputs import Ephemeris, Horizon, load_ephemeris, load_horizon, write_json
 from scientific.ephemeris import KernelPool, SpiceClock
-from scientific.frontend_validation import validate_frontend
+from scientific.frontend_validation import png_header, validate_frontend, validate_terrain_assets
+from scientific.__main__ import main as cli
 from scientific.inputs import file_hash
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -128,6 +129,45 @@ class DataTests(unittest.TestCase):
             write_json(output / "manifest.json", manifest)
             with self.assertRaisesRegex(ValueError, "manifest summary"):
                 validate_frontend(output, ROOT / "schemas/scenario.schema.json")
+
+
+class TerrainAssetTests(unittest.TestCase):
+    """The 3D terrain handoff must reach the frontend with the scientific JSON."""
+
+    def test_real_terrain_assets_are_complete(self):
+        report = validate_terrain_assets(ROOT / "data/terrain")
+        self.assertEqual([row["site_id"] for row in report["sites"]], ["site01", "site04", "site07", "site11"])
+        for row in report["sites"]:
+            self.assertEqual(png_header(ROOT / "data/terrain" / row["height_png"]), (1024, 1024, 16, 0))
+            self.assertEqual(png_header(ROOT / "data/terrain" / row["hillshade_png"]), (1024, 1024, 8, 0))
+
+    def test_terrain_validation_rejects_missing_or_wrong_images(self):
+        with tempfile.TemporaryDirectory() as directory:
+            terrain = Path(directory)
+            for path in (ROOT / "data/terrain").glob("site_*"):
+                (terrain / path.name).write_bytes(path.read_bytes())
+            (terrain / "site_07_hillshade.png").unlink()
+            with self.assertRaisesRegex(ValueError, "site07: hillshade_png"):
+                validate_terrain_assets(terrain)
+            (terrain / "site_07_hillshade.png").write_bytes((terrain / "site_07_height.png").read_bytes())
+            with self.assertRaisesRegex(ValueError, "16-bit"):
+                validate_terrain_assets(terrain)
+
+    def test_sync_frontend_copies_json_and_terrain(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source, destination = Path(directory) / "processed", Path(directory) / "public"
+            write_json(source / "manifest.json", {"status": "awaiting_horizons"})
+            with patch("sys.stdout"):
+                self.assertEqual(cli(["sync-frontend", "--source", str(source), "--destination", str(destination)]), 0)
+            self.assertTrue((destination / "manifest.json").is_file())
+            copied = sorted(path.name for path in (destination / "terrain").iterdir())
+            self.assertEqual(len(copied), 12)
+            for site in ("01", "04", "07", "11"):
+                for suffix in ("height.png", "hillshade.png", "terrain.json"):
+                    name = f"site_{site}_{suffix}"
+                    self.assertIn(name, copied)
+                    self.assertEqual((destination / "terrain" / name).read_bytes(),
+                                     (ROOT / "data/terrain" / name).read_bytes())
 
 
 class SyntheticGeometryTests(unittest.TestCase):

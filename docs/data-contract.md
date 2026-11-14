@@ -63,6 +63,42 @@ sites). Horizon arrays have their own `az_deg` and `n_az`: Site04's refined
 profile has 14,400 directions; the other sites have 7,200. Read the actual
 array and interpolate periodically instead of assuming a fixed length.
 
+## 3D terrain assets
+
+`sync-frontend` also validates and copies the 12 terrain files from
+`data/terrain/` to `frontend/public/data/terrain/`, so they are served from
+`/data/terrain/`. Their names and contents are unchanged:
+
+| File (per site, XX = 01, 04, 07, 11) | Use |
+| --- | --- |
+| `terrain/site_XX_terrain.json` | Tile size, metre ranges, elevation decode, north, landing marker |
+| `terrain/site_XX_height.png` | Real heights: 16-bit grayscale, 1024 × 1024 |
+| `terrain/site_XX_hillshade.png` | Visual texture only: 8-bit, synthetic light (not the Sun) |
+
+The site id `site04` maps to the file prefix `site_04`. Image names are read
+from `height_png` and `hillshade_png` in the terrain JSON, relative to that JSON:
+
+```ts
+const terrainUrl = new URL(`terrain/site_${site.site_id.slice(4)}_terrain.json`, manifestUrl);
+const terrain = await fetch(terrainUrl).then(r => r.json());
+const heightUrl = new URL(terrain.height_png, terrainUrl);
+const hillshadeUrl = new URL(terrain.hillshade_png, terrainUrl);
+// z = zmin_m + DN / 65535 * (zmax_m - zmin_m); see data/terrain/README.md.
+```
+
+Load the heightmap with a loader that keeps all 16 bits (an 8-bit browser
+image reduces the vertical resolution to (zmax − zmin) / 255, about 8–18 m).
+`validate-frontend` and `sync-frontend` reject a missing image, a wrong size or
+bit depth, or metadata that names another site.
+
+## Deployment
+
+`frontend/public/data/` is ignored by git; the versioned sources are
+`data/processed/` and `data/terrain/`. A deployed build therefore contains the
+data only if `python -m scientific sync-frontend` runs before `vite build`
+(build environment with `pip install -r requirements.txt`), or if the team
+decides to version the synced folder instead.
+
 ## Units and coordinates
 
 - Angles: degrees. Azimuth is clockwise from north: 0° north, 90° east.
