@@ -2,6 +2,7 @@ import { OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { SRGBColorSpace, DoubleSide, TextureLoader, Vector3, type Texture } from 'three'
+import { SiteScience } from './SiteScience'
 import { loadSites } from '../sites/loadSites'
 import { buildTerrainGeometry, nearestSiteVertex, type TerrainMesh } from '../terrain/buildGeometry'
 import { loadHeightData, loadTerrainMeta } from '../terrain/loadTerrain'
@@ -22,6 +23,7 @@ export function TerrainViewer() {
   const [sitesError, setSitesError] = useState<string | null>(null)
   const [selectedSiteId, setSelectedSiteId] = useState<SiteId>('site01')
   const [loadedSiteId, setLoadedSiteId] = useState<SiteId | null>(null)
+  const selectedSite = sites.find((site) => site.site_id === selectedSiteId) ?? null
   const siteLabelRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<ViewControls | null>(null)
 
@@ -160,6 +162,7 @@ export function TerrainViewer() {
           </aside>
         )}
       </div>
+      {selectedSite && <SiteScience site={selectedSite} />}
       <p className="terrain-note">Hillshade: visual only, synthetic light (not the real Sun)</p>
       {terrain && loadedSiteId && (
         <div ref={siteLabelRef} className="terrain-site-label">

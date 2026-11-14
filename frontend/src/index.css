@@ -170,6 +170,84 @@ body {
   pointer-events: none;
 }
 
+.terrain-science {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1;
+  box-sizing: border-box;
+  width: min(22rem, calc(100vw - 32px));
+  max-height: min(46svh, 24rem);
+  overflow: auto;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.terrain-science-title,
+.terrain-science-utc {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.terrain-science-period,
+.terrain-science-note {
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.terrain-science-time {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.terrain-science-time input[type='range'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.terrain-science-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.terrain-chip {
+  margin: 0;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.terrain-chip-on {
+  border-color: #f5b000;
+}
+
+.terrain-science dl {
+  margin: 0;
+}
+
+.terrain-science dl div {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 8px;
+}
+
+.terrain-science dt {
+  color: var(--text);
+}
+
+.terrain-science dd {
+  margin: 0;
+}
+
 .terrain-note {
   position: absolute;
   left: 16px;
