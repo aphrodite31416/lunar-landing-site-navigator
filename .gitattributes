@@ -1,0 +1,2 @@
+# Preserve upstream NASA kernels byte for byte, including spaces in comments.
+data/kernels/* -text -whitespace

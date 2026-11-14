@@ -1,0 +1,10 @@
+{
+  "duration_s": 604800,
+  "landing_step_s": 21600,
+  "max_darkness_s": 21600,
+  "max_insufficient_light_s": 43200,
+  "max_earth_gap_s": 172800,
+  "min_sunlight_fraction": 0.5,
+  "min_joint_s": 86400,
+  "min_energy_wh": null
+}

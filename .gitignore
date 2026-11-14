@@ -64,6 +64,12 @@ htmlcov/
 *.swo
 *.log
 
+# Downloaded large SPICE kernels; the small leap-second kernel is versioned.
+data/kernels/*.bsp
+data/kernels/*.bpc
+data/kernels/*.part
+frontend/public/data/
+
 # ==============================
 # Editor / Operating System
 # ==============================
@@ -73,3 +79,10 @@ htmlcov/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Terrain: LOLA DEMs (~570 MB) are downloaded by terrain/scripts/download_data.py
+terrain/data/raw/*
+!terrain/data/raw/rois/
+terrain/data/raw/rois/*.tgz
+terrain/data/derived/horizons/bbox_*
+terrain/data/derived/horizons/log_*
