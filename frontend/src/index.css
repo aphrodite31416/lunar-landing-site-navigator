@@ -176,8 +176,8 @@ body {
   bottom: 16px;
   z-index: 1;
   box-sizing: border-box;
-  width: min(22rem, calc(100vw - 32px));
-  max-height: min(46svh, 24rem);
+  width: min(26rem, calc(100vw - 32px));
+  max-height: min(70svh, 44rem);
   overflow: auto;
   padding: 12px 14px;
   border-radius: 8px;
@@ -185,6 +185,89 @@ body {
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   color: var(--text-h);
   font-size: 14px;
+}
+
+.terrain-science-wide {
+  width: min(44rem, calc(100vw - 32px));
+}
+
+.terrain-science-tabs,
+.terrain-science-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.terrain-science-tabs button[aria-pressed='true'] {
+  border-color: #f5b000;
+}
+
+.terrain-science-buttons .terrain-info-toggle {
+  padding: 3px 8px;
+  font-size: 13px;
+}
+
+.terrain-info-toggle:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.terrain-science-warning {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #f5b000;
+  background: color-mix(in srgb, #f5b000 15%, var(--bg));
+}
+
+.terrain-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--text-h);
+  text-decoration: underline dotted;
+  cursor: pointer;
+}
+
+.terrain-compare-scroll {
+  overflow-x: auto;
+  margin-bottom: 8px;
+}
+
+.terrain-compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.terrain-compare th,
+.terrain-compare td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.terrain-compare th[scope='row'],
+.terrain-compare thead th:first-child {
+  text-align: left;
+  font-weight: 400;
+  color: var(--text);
+  white-space: normal;
+}
+
+.terrain-compare .terrain-compare-selected {
+  background: color-mix(in srgb, #f5b000 12%, transparent);
+}
+
+.terrain-compare .terrain-compare-best {
+  font-weight: 700;
 }
 
 .terrain-science-title,
