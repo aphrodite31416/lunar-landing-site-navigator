@@ -4,8 +4,8 @@ export type ScenarioDataset = Extract<Manifest['datasets'][number], { kind: 'ter
 
 let manifestRequest: Promise<Manifest> | null = null
 
-function manifestUrl() {
-  return new URL('data/manifest.json', document.baseURI)
+export function manifestUrl() {
+  return new URL(`${import.meta.env.BASE_URL}data/manifest.json`, document.baseURI)
 }
 
 export function loadManifest(): Promise<Manifest> {

@@ -5,7 +5,9 @@ import { SRGBColorSpace, DoubleSide, TextureLoader, Vector3, type Texture } from
 import { SiteScience } from './SiteScience'
 import { loadSites } from '../sites/loadSites'
 import { buildTerrainGeometry, nearestSiteVertex, type TerrainMesh } from '../terrain/buildGeometry'
-import { loadHeightData, loadTerrainMeta } from '../terrain/loadTerrain'
+import { loadHeightData, loadTerrainMeta, terrainAssetUrl } from '../terrain/loadTerrain'
+import { formatLatLon, formatUtcShort } from '../science/format'
+import type { LiveStatus } from '../science/liveStatus'
 import type { Site, SiteId } from '../types/science'
 import type { HeightSummary, TerrainMeta } from '../terrain/types'
 
@@ -23,9 +25,15 @@ export function TerrainViewer() {
   const [sitesError, setSitesError] = useState<string | null>(null)
   const [selectedSiteId, setSelectedSiteId] = useState<SiteId>('site01')
   const [loadedSiteId, setLoadedSiteId] = useState<SiteId | null>(null)
+  const [liveStatus, setLiveStatus] = useState<LiveStatus | null>(null)
   const selectedSite = sites.find((site) => site.site_id === selectedSiteId) ?? null
   const siteLabelRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<ComponentRef<typeof OrbitControls> | null>(null)
+
+  const selectSite = (siteId: SiteId) => {
+    setLiveStatus(null)
+    setSelectedSiteId(siteId)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -85,7 +93,7 @@ export function TerrainViewer() {
     if (!terrain) return
     const loader = new TextureLoader()
     let alive = true
-    const texture = loader.load(`/terrain/${terrain.hillshade_png}`, () => {
+    const texture = loader.load(terrainAssetUrl(terrain.hillshade_png), () => {
       if (!alive) {
         texture.dispose()
         return
@@ -104,16 +112,23 @@ export function TerrainViewer() {
   return (
     <div className="terrain-viewer">
       <div className="terrain-hud">
+        <header className="app-brand">
+          <p className="app-brand-kicker">NASA Space Apps 2026 · Lunar south pole</p>
+          <h1 className="app-brand-title">Lunar Landing Site Navigator</h1>
+        </header>
         <div className="terrain-site-selector" role="group" aria-label="Landing sites">
           {sites.map((site) => (
             <button
               key={site.site_id}
               type="button"
-              className="terrain-info-toggle"
+              className="terrain-info-toggle terrain-site-button"
               aria-pressed={site.site_id === selectedSiteId}
-              onClick={() => setSelectedSiteId(site.site_id)}
+              onClick={() => selectSite(site.site_id)}
             >
-              {site.name}
+              <span className="terrain-site-button-name">{site.name}</span>
+              <span className="terrain-site-button-coords">
+                {formatLatLon(site.latitude_deg, site.longitude_deg)}
+              </span>
             </button>
           ))}
         </div>
@@ -162,15 +177,24 @@ export function TerrainViewer() {
           </aside>
         )}
       </div>
-      {selectedSite && <SiteScience site={selectedSite} />}
+      {selectedSite && (
+        <SiteScience site={selectedSite} onSelectSite={selectSite} onLiveStatus={setLiveStatus} />
+      )}
       <p className="terrain-note">Hillshade: visual only, synthetic light (not the real Sun)</p>
       {terrain && loadedSiteId && (
         <div ref={siteLabelRef} className="terrain-site-label">
-          Site{loadedSiteId.slice(4)} landing point
+          <span className="terrain-site-label-name">Site {loadedSiteId.slice(4)} landing point</span>
+          {liveStatus && (
+            <span className="terrain-site-label-status" title={formatUtcShort(liveStatus.utc)}>
+              <span className={liveStatus.sunlight ? 'on sun' : 'sun'}>Sun</span>
+              <span className={liveStatus.earth ? 'on earth' : 'earth'}>Earth</span>
+              <span className={liveStatus.joint ? 'on joint' : 'joint'}>Joint</span>
+            </span>
+          )}
         </div>
       )}
       <Canvas camera={{ position: [0, 8000, 22000], fov: 45, near: 1, far: 400000 }}>
-        <color attach="background" args={['#16171d']} />
+        <color attach="background" args={['#0d0f14']} />
         <ambientLight intensity={0.45} />
         <directionalLight position={[4, 6, 3]} intensity={1.2} />
         {mesh && (
@@ -179,10 +203,6 @@ export function TerrainViewer() {
           </mesh>
         )}
         {terrain && <SiteMarker terrain={terrain} labelRef={siteLabelRef} exaggeration={exaggeration} />}
-        <mesh>
-          <boxGeometry args={[1.5, 1.5, 1.5]} />
-          <meshStandardMaterial color="#c084fc" />
-        </mesh>
         <OrbitControls ref={controlsRef} />
         <RememberView controlsRef={controlsRef} />
       </Canvas>

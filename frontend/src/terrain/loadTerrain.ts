@@ -8,8 +8,12 @@ export type HeightData = {
   samples: Uint16Array
 }
 
+export function terrainAssetUrl(filename: string) {
+  return `${import.meta.env.BASE_URL}terrain/${filename}`
+}
+
 export async function loadTerrainMeta(siteId: SiteId): Promise<TerrainMeta> {
-  const response = await fetch(`/terrain/site_${siteId.slice(4)}_terrain.json`)
+  const response = await fetch(terrainAssetUrl(`site_${siteId.slice(4)}_terrain.json`))
   if (!response.ok) {
     throw new Error(`Could not load terrain JSON (${response.status})`)
   }
@@ -21,7 +25,7 @@ export async function loadHeightData(
   column: number,
   row: number,
 ): Promise<HeightData> {
-  const response = await fetch(`/terrain/${meta.height_png}`)
+  const response = await fetch(terrainAssetUrl(meta.height_png))
   if (!response.ok) {
     throw new Error(`Could not load height PNG (${response.status})`)
   }

@@ -122,6 +122,20 @@ export interface BodyPositions {
   warnings: string[];
 }
 
+/** Fields of horizons/siteXX.json used by the frontend; arrays are periodic in azimuth. */
+export interface HorizonProfile {
+  site_id: SiteId;
+  name: string;
+  az_start_deg: number;
+  az_step_deg: number;
+  n_az: number;
+  az_deg: number[];
+  horizon_deg: number[];
+  valid: boolean[];
+  method?: string;
+  observer_height_m?: number;
+}
+
 export interface Mission {
   duration_s: number;
   landing_step_s: number;
