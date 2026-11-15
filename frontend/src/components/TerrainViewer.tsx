@@ -2,6 +2,7 @@ import { OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { SRGBColorSpace, DoubleSide, TextureLoader, Vector3, type Texture } from 'three'
+import { SiteCompare } from './SiteCompare'
 import { SiteScience } from './SiteScience'
 import { loadSites } from '../sites/loadSites'
 import { buildTerrainGeometry, nearestSiteVertex, type TerrainMesh } from '../terrain/buildGeometry'
@@ -18,6 +19,7 @@ export function TerrainViewer() {
   const [mesh, setMesh] = useState<TerrainMesh | null>(null)
   const [hillshade, setHillshade] = useState<Texture | null>(null)
   const [infoOpen, setInfoOpen] = useState(false)
+  const [compareOpen, setCompareOpen] = useState(false)
   const [exaggeration, setExaggeration] = useState(1)
   const [sites, setSites] = useState<Site[]>([])
   const [sitesError, setSitesError] = useState<string | null>(null)
@@ -130,6 +132,14 @@ export function TerrainViewer() {
           <button type="button" className="terrain-info-toggle" onClick={() => controlsRef.current?.reset()}>
             Reset view
           </button>
+          <button
+            type="button"
+            className="terrain-info-toggle"
+            aria-pressed={compareOpen}
+            onClick={() => setCompareOpen((open) => !open)}
+          >
+            {compareOpen ? 'Hide compare' : 'Compare'}
+          </button>
         </div>
         <label className="terrain-exaggeration">
           Vertical exaggeration (visual only)
@@ -162,7 +172,8 @@ export function TerrainViewer() {
           </aside>
         )}
       </div>
-      {selectedSite && <SiteScience site={selectedSite} />}
+      {compareOpen && <SiteCompare sites={sites} selectedSiteId={selectedSiteId} />}
+      {selectedSite && <SiteScience site={selectedSite} hidden={compareOpen} />}
       <p className="terrain-note">Hillshade: visual only, synthetic light (not the real Sun)</p>
       {terrain && loadedSiteId && (
         <div ref={siteLabelRef} className="terrain-site-label">

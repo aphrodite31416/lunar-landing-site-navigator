@@ -305,6 +305,49 @@ body {
   font-size: 13px;
 }
 
+.terrain-compare {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 72px;
+  z-index: 3;
+  box-sizing: border-box;
+  max-height: min(42svh, 22rem);
+  overflow: auto;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 13px;
+}
+
+.terrain-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.terrain-compare-table th,
+.terrain-compare-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.terrain-compare-table th:first-child,
+.terrain-compare-table td:first-child,
+.terrain-compare-table tbody th {
+  text-align: left;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.terrain-compare-selected {
+  color: var(--text-h);
+  box-shadow: inset 0 -2px 0 #f5b000;
+}
+
 .terrain-note {
   position: absolute;
   left: 16px;

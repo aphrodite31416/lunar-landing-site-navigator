@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { loadScenario } from '../sites/loadScenario'
 import type { Site, TerrainScenario, VisibilityEvent, VisibilitySample, VisibilityWindow } from '../types/science'
 
-export function SiteScience({ site }: { site: Site }) {
+export function SiteScience({ site, hidden = false }: { site: Site; hidden?: boolean }) {
   const [scenario, setScenario] = useState<TerrainScenario | null>(null)
   const [index, setIndex] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -37,7 +37,7 @@ export function SiteScience({ site }: { site: Site }) {
 
   if (site.site_id !== 'site01') {
     return (
-      <aside className="terrain-science">
+      <aside className="terrain-science" hidden={hidden}>
         <p>Time readout is available for Site 01.</p>
       </aside>
     )
@@ -45,7 +45,7 @@ export function SiteScience({ site }: { site: Site }) {
 
   if (!scenarioUrl || site.terrain_status !== 'ready') {
     return (
-      <aside className="terrain-science">
+      <aside className="terrain-science" hidden={hidden}>
         <p>Site 01 has no scenario file yet.</p>
       </aside>
     )
@@ -54,7 +54,7 @@ export function SiteScience({ site }: { site: Site }) {
   const sample = scenario ? scenario.series[Math.min(index, scenario.series.length - 1)] : null
 
   return (
-    <aside className="terrain-science" aria-label="Site 01 time">
+    <aside className="terrain-science" aria-label="Site 01 time" hidden={hidden}>
       <p className="terrain-science-title">{site.name} time</p>
       {error && <p className="terrain-readout-status">{error}</p>}
       {loading && !sample && <p>Loading the Site 01 timeline…</p>}
