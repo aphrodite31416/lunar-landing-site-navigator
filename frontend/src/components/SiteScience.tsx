@@ -8,24 +8,32 @@ export function SiteScience({ site, hidden = false }: { site: Site; hidden?: boo
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const scenarioUrl = site.site_id === 'site01' ? site.scenario_url : null
+  const scenarioUrl = site.scenario_url
 
   useEffect(() => {
-    if (!scenarioUrl || site.terrain_status !== 'ready') return
+    if (!scenarioUrl || site.terrain_status !== 'ready') {
+      setScenario(null)
+      setIndex(0)
+      setLoading(false)
+      return
+    }
     let cancelled = false
+    setScenario((current) => (current?.site_id === site.site_id ? current : null))
+    setIndex(0)
     setLoading(true)
     setError(null)
     loadScenario(scenarioUrl)
       .then((loaded) => {
         if (cancelled) return
-        if (loaded.site_id !== 'site01') {
-          setError('The scenario file is not for Site 01')
+        if (loaded.site_id !== site.site_id) {
+          setScenario(null)
+          setError(`The scenario file is not for ${site.name}`)
           return
         }
         setScenario(loaded)
       })
       .catch((caught: unknown) => {
-        if (!cancelled) setError(messageFrom(caught, 'Could not load the Site 01 timeline'))
+        if (!cancelled) setError(messageFrom(caught, `Could not load the ${site.name} timeline`))
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -33,33 +41,27 @@ export function SiteScience({ site, hidden = false }: { site: Site; hidden?: boo
     return () => {
       cancelled = true
     }
-  }, [scenarioUrl, site.terrain_status])
-
-  if (site.site_id !== 'site01') {
-    return (
-      <aside className="terrain-science" hidden={hidden}>
-        <p>Time readout is available for Site 01.</p>
-      </aside>
-    )
-  }
+  }, [scenarioUrl, site.site_id, site.name, site.terrain_status])
 
   if (!scenarioUrl || site.terrain_status !== 'ready') {
     return (
       <aside className="terrain-science" hidden={hidden}>
-        <p>Site 01 has no scenario file yet.</p>
+        <p>{site.name} has no scenario file yet.</p>
       </aside>
     )
   }
 
-  const sample = scenario ? scenario.series[Math.min(index, scenario.series.length - 1)] : null
+  const active = scenario?.site_id === site.site_id ? scenario : null
+  const sample = active ? active.series[Math.min(index, active.series.length - 1)] : null
+  const showLoading = !sample && !error && (loading || scenario?.site_id !== site.site_id)
 
   return (
-    <aside className="terrain-science" aria-label="Site 01 time" hidden={hidden}>
+    <aside className="terrain-science" aria-label={`${site.name} time`} hidden={hidden}>
       <p className="terrain-science-title">{site.name} time</p>
       {error && <p className="terrain-readout-status">{error}</p>}
-      {loading && !sample && <p>Loading the Site 01 timeline…</p>}
-      {scenario && sample && (
-        <Timeline scenario={scenario} sample={sample} index={index} onIndex={setIndex} />
+      {showLoading && <p>Loading the {site.name} timeline…</p>}
+      {active && sample && (
+        <Timeline scenario={active} sample={sample} index={index} onIndex={setIndex} />
       )}
     </aside>
   )
