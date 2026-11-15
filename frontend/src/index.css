@@ -1,34 +1,48 @@
 /* ---------- Design tokens ---------- */
 
 :root {
-  --bg: #0d0f14;
-  --surface: rgba(15, 18, 25, 0.92);
-  --surface-solid: #11141b;
-  --surface-2: rgba(255, 255, 255, 0.035);
-  --surface-3: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.09);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --text-h: #eef1f6;
-  --text: #a7afbd;
-  --text-dim: #737b8c;
+  /* Mission Atlas tokens. Colour is data: amber, blue and green mean Sun,
+     Earth and both together, and nothing else. Chrome stays neutral. */
+  --void: #07080b;
+  --bg: #07080b;
+  --surface-1: #0e1015;
+  --surface-solid: #0e1015;
+  --surface: rgba(14, 16, 21, 0.86);
+  --surface-2: #151820;
+  --surface-3: #1d212b;
+  --hairline: rgba(255, 255, 255, 0.08);
+  /* Instrument chrome: a slightly lifted graphite, and the rules that
+     structure it in place of boxes. */
+  --chrome: #0b0d12;
+  --rule: rgba(255, 255, 255, 0.075);
+  --rule-strong: rgba(255, 255, 255, 0.15);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-h: #eceef2;
+  --text: #a4aab6;
+  --text-dim: #7d8391;
+  --focus: #a8c7ff;
 
-  /* One colour per physical quantity, used consistently everywhere. */
-  --accent: #f5b000;
-  --sun: #f5b000;
-  --earth: #5aa9ff;
-  --joint: #3fd0a0;
+  /* Neutral highlight for selection and emphasis (not a data colour). */
+  --accent: #dfe4ec;
+  --sun: #f2b640;
+  --earth: #5b9dff;
+  --joint: #3cc9a0;
   --dark: #6b7385;
-  --warn: #ffb547;
+  --warn: #f2b640;
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
 
-  --sans: 'Sora', 'Segoe UI', sans-serif;
+  --sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --heading: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --display: 'Newsreader', 'Iowan Old Style', Georgia, serif;
   --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
-  --heading: 'Sora', 'Segoe UI', sans-serif;
 
-  font: 15px/1.5 var(--sans);
+  font: 14px/1.5 var(--sans);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "cv11", "ss01";
   color-scheme: dark;
   color: var(--text);
   background: var(--bg);
@@ -69,7 +83,7 @@ code {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -680,7 +694,7 @@ input[type='range'] {
 }
 
 .terrain-compare-scroll:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -763,7 +777,7 @@ button.cmp-card:hover {
 }
 
 button.cmp-card:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -934,7 +948,7 @@ button.cmp-card:focus-visible {
 }
 
 .cmp-col-button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
   border-radius: 2px;
 }

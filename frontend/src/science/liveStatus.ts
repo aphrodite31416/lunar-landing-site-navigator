@@ -1,7 +1,7 @@
 import { inWindows } from './timeline'
 import type { TerrainScenario, VisibilitySample } from '../types/science'
 
-/** Live visibility at the selected timeline sample, for the 3D site label. */
+/** Live visibility at the selected moment, for the 3D site label and the site rail. */
 export type LiveStatus = {
   utc: string
   sunlight: boolean
@@ -9,12 +9,16 @@ export type LiveStatus = {
   joint: boolean
 }
 
-export function liveStatusFrom(scenario: TerrainScenario, sample: VisibilitySample): LiveStatus {
-  const offset = sample.offset_s
+/** States at an exact offset, read from the precomputed windows (authoritative at event boundaries). */
+export function liveStatusAt(scenario: TerrainScenario, offsetS: number, utc: string): LiveStatus {
   return {
-    utc: sample.utc,
-    sunlight: inWindows(scenario.windows.sunlight, offset),
-    earth: inWindows(scenario.windows.earth, offset),
-    joint: inWindows(scenario.windows.joint, offset),
+    utc,
+    sunlight: inWindows(scenario.windows.sunlight, offsetS),
+    earth: inWindows(scenario.windows.earth, offsetS),
+    joint: inWindows(scenario.windows.joint, offsetS),
   }
+}
+
+export function liveStatusFrom(scenario: TerrainScenario, sample: VisibilitySample): LiveStatus {
+  return liveStatusAt(scenario, sample.offset_s, sample.utc)
 }

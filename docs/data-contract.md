@@ -43,6 +43,7 @@ HTTP status before parsing in application code.
 | `geometry/siteXX.json` | Real Sun/Earth azimuth/elevation; no terrain visibility |
 | `horizons/siteXX.json` | The validated original horizon-v2 profile |
 | `scenarios/monthly-2026-11/siteXX.json` | Terrain-aware timeline, windows, events, metrics |
+| `scenarios/monthly-2026-11/compare_summary.json` | Four-site windows, events and metrics only, for Compare (about 10 KB) |
 | `planner.json` | Landing-date grid, constraint failures, recommendations, Pareto flags |
 | `historical/siteXX.json` | 2009–2013 daily aggregates and sample summaries |
 | `ephemeris_validation.json` | Reproduction check against the declared NASA kernels |
@@ -62,6 +63,30 @@ and `terrain_applied: false`; their elevations alone do not indicate visibility.
 sites). Horizon arrays have their own `az_deg` and `n_az`: Site04's refined
 profile has 14,400 directions; the other sites have 7,200. Read the actual
 array and interpolate periodically instead of assuming a fixed length.
+
+## Four-site comparison summary
+
+`scenarios/<dataset>/compare_summary.json` sits next to the scenario files of the
+`terrain_scenarios` dataset. It lets the Compare view draw all four timelines and
+compute shared visibility gaps without downloading the four full scenarios
+(about 38 MB together). Schema: `schemas/compare_summary.schema.json`.
+
+- **Contents:** per site, `period`, `origin_offset_s` and `end_offset_s` (first
+  and last sample offsets), all six window lists, `events` and `metrics`, plus the
+  scenario URL and its SHA-256. There is no sample series.
+- **Exactness:** every field is copied verbatim from the scenario; nothing is
+  recomputed, so window boundaries, event offsets and UTC strings are identical.
+- **Determinism:** the same exports always give byte-identical JSON (compact, UTF-8,
+  one LF newline on every OS).
+- **Generation:** `python -m scientific build` writes it with a ready manifest;
+  `python -m scientific sync-frontend` regenerates and validates it before copying;
+  `python -m scientific compare-summary` does it on its own.
+- **Validation:** `validate-frontend` (and the step above) checks it against the
+  schema, the manifest (dataset, period, threshold, sites, URLs, metrics), the
+  current scenario hashes, and a fresh rebuild. A stale file is an error.
+- **Frontend:** `loadCompareSummary` repeats the manifest checks in the browser.
+  If the file is missing or does not match, Compare falls back to the full
+  scenario files, so results are the same either way.
 
 ## 3D terrain assets
 
@@ -93,11 +118,11 @@ bit depth, or metadata that names another site.
 
 ## Deployment
 
-`frontend/public/data/` is ignored by git; the versioned sources are
-`data/processed/` and `data/terrain/`. A deployed build therefore contains the
-data only if `python -m scientific sync-frontend` runs before `vite build`
-(build environment with `pip install -r requirements.txt`), or if the team
-decides to version the synced folder instead.
+`frontend/public/data/` is ignored by git. The production build includes the
+precomputed exports and terrain assets from `data/processed/` and `data/terrain/`
+when no synced manifest is present. Run `python -m scientific sync-frontend`
+before building to use a locally generated dataset. Set Vite's `base` to the
+deployment path when hosting under a subpath.
 
 ## Units and coordinates
 

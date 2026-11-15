@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { loadHorizon } from '../sites/loadHorizon'
-import { formatAngle, formatPercent, messageFrom } from '../science/format'
+import { formatAngle, formatPercent, formatUtc, messageFrom } from '../science/format'
 import { inWindows } from '../science/timeline'
 import type { HorizonProfile, Site, TerrainScenario, VisibilitySample } from '../types/science'
 
-const W = 480
-const H = 190
-const PAD = { left: 30, right: 8, top: 10, bottom: 20 }
+const W = 400
+const H = 232
+const PAD = { left: 30, right: 10, top: 12, bottom: 22 }
 const PLOT_W = W - PAD.left - PAD.right
 const PLOT_H = H - PAD.top - PAD.bottom
 const SILHOUETTE_BINS = 720
@@ -24,21 +24,44 @@ export function HorizonView({
   site,
   scenario,
   sample,
+  offsetS = sample.offset_s,
+  onExpand,
+  idSuffix = '',
 }: {
+  /** Shows an Expand button when given. */
+  onExpand?: () => void
+  /** Keeps element ids unique when the panorama is shown twice. */
+  idSuffix?: string
   site: Site
   scenario: TerrainScenario
+  /** Nearest exported sample: positions and clearances. */
   sample: VisibilitySample
+  /** Exact selected moment: visibility states come from the windows here. */
+  offsetS?: number
 }) {
   const { horizon, error, retry } = useHorizon(site)
   const frame = useMemo(() => (horizon ? buildFrame(horizon, scenario) : null), [horizon, scenario])
-  const sunlit = inWindows(scenario.windows.sunlight, sample.offset_s)
-  const earthVisible = inWindows(scenario.windows.earth, sample.offset_s)
+  const sunlit = inWindows(scenario.windows.sunlight, offsetS)
+  const earthVisible = inWindows(scenario.windows.earth, offsetS)
 
   return (
-    <section className="sci-section sky" aria-labelledby={`sky-${site.site_id}`}>
-      <h3 className="sci-section-title" id={`sky-${site.site_id}`}>
-        Sky above the terrain horizon
-      </h3>
+    <section className="sci-section sky" aria-labelledby={`sky-${site.site_id}${idSuffix}`}>
+      <div className="sky-head">
+        <div>
+          <h3 className="sci-section-title" id={`sky-${site.site_id}${idSuffix}`}>
+            Sky panorama
+          </h3>
+          <p className="sky-sub">Sun and Earth against the terrain horizon, seen from the landing point</p>
+        </div>
+        {onExpand && (
+          <button type="button" className="sky-expand" onClick={onExpand} title="Open the panorama over the 3D view">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9" />
+            </svg>
+            Expand
+          </button>
+        )}
+      </div>
       {error ? (
         <div className="terrain-science-warning">
           <p>{error}</p>
@@ -102,23 +125,12 @@ function SkyChart({
     earth
       ? `Earth centre at azimuth ${formatAngle(earth.az)}, ${clearanceText(sample.earth_clearance_deg)} the terrain horizon`
       : 'Earth direction undefined',
+    sunlit ? `sunlight available (at least ${formatPercent(threshold, 0)} of the disc)` : `sunlight below ${formatPercent(threshold, 0)} of the disc`,
+    earthVisible ? 'Earth in line of sight' : 'no line of sight to Earth',
   ].join('; ')
 
   return (
     <>
-      <div className="sky-status" aria-live="polite">
-        <p className={sunlit ? 'sky-status-pill on sun' : 'sky-status-pill sun'}>
-          <span className="sky-key sky-key-sun" aria-hidden="true" />
-          Sun {sun ? clearanceText(sample.sun_clearance_deg) : 'undefined'}
-          {sunlit ? ` · ≥ ${formatPercent(threshold, 0)} disc` : ` · below ${formatPercent(threshold, 0)} disc`}
-        </p>
-        <p className={earthVisible ? 'sky-status-pill on earth' : 'sky-status-pill earth'}>
-          <span className="sky-key sky-key-earth" aria-hidden="true" />
-          Earth {earth ? clearanceText(sample.earth_clearance_deg) : 'undefined'}
-          {earthVisible ? ' · in line of sight' : ' · no line of sight'}
-        </p>
-      </div>
-
       <svg className="sky-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${horizonName}. ${summary}.`}>
         <defs>
           <linearGradient id="sky-gradient" x1="0" y1="0" x2="0" y2="1">
@@ -166,7 +178,7 @@ function SkyChart({
               r={4.5}
             />
             <MarkerLabel x={x(earth.az)} y={y(earth.el)} offset={8} className="sky-label-earth">
-              Earth
+              {`Earth ${signedAngle(sample.earth_clearance_deg)}`}
             </MarkerLabel>
           </g>
         )}
@@ -187,12 +199,17 @@ function SkyChart({
               r={sunRadius}
             />
             <MarkerLabel x={x(sun.az)} y={y(sun.el)} offset={sunRadius + 6} className="sky-label-sun">
-              Sun
+              {`Sun ${signedAngle(sample.sun_clearance_deg)}`}
             </MarkerLabel>
           </g>
         )}
         <rect className="sky-frame" x={PAD.left} y={PAD.top} width={PLOT_W} height={PLOT_H} />
       </svg>
+
+      <p className="sky-meta">
+        Positions at the exported sample <time dateTime={sample.utc}>{formatUtc(sample.utc)}</time> · elevation
+        stretched ×{Math.round(frame.stretch)}
+      </p>
 
       <ul className="sky-legend">
         <li>
@@ -205,11 +222,14 @@ function SkyChart({
           <span className="sky-key sky-key-hollow" aria-hidden="true" /> Hollow = blocked / below threshold
         </li>
       </ul>
-      <p className="sky-caption">
+      <details className="sky-howto">
+        <summary>How to read the panorama</summary>
+        <p className="sky-caption">
         Full 360° panorama from the observer: azimuth clockwise from north; the grey silhouette is the highest
         terrain in each direction ({horizonName}). Visibility requires standing above that silhouette — not merely
-        above 0°. Elevation is stretched ~{Math.round(frame.stretch)}× so few-degree clearances are readable.
-      </p>
+        above 0°. Elevation is stretched ~{Math.round(frame.stretch)}× so few-degree clearances are readable. Labels give each body's clearance above (+) or below (−) the terrain horizon.
+        </p>
+      </details>
     </>
   )
 }
@@ -227,7 +247,7 @@ function MarkerLabel({
   className: string
   children: string
 }) {
-  const flip = x > W - PAD.right - 40
+  const flip = x > W - PAD.right - 84
   return (
     <text
       className={`sky-label ${className}`}
@@ -244,6 +264,12 @@ function MarkerLabel({
 function bodyPosition(az: number | null, el: number | null, horizon: number | null) {
   if (az === null || el === null || horizon === null) return null
   return { az: ((az % 360) + 360) % 360, el, horizon }
+}
+
+function signedAngle(value: number | null) {
+  if (value === null) return '—'
+  if (Math.abs(value) < 0.005) return '0.00°'
+  return `${value > 0 ? '+' : '−'}${Math.abs(value).toFixed(2)}°`
 }
 
 function clearanceText(clearance: number | null) {

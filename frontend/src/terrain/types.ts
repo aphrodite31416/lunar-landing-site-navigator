@@ -12,6 +12,10 @@ export type TerrainMeta = {
     zmin_m: number
     zmax_m: number
   }
+  /** Local north at the site: clockwise angle from image up (equals longitude). */
+  north?: {
+    north_at_site_deg: number
+  }
   site: {
     px: [number, number]
     scene_xyz_m: [number, number, number]

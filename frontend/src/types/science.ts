@@ -134,6 +134,8 @@ export interface HorizonProfile {
   valid: boolean[];
   method?: string;
   observer_height_m?: number;
+  /** Great-circle distance from the observer to the terrain that sets each direction's horizon. */
+  blocking_arc_distance_m?: number[];
 }
 
 export interface Mission {
@@ -207,4 +209,31 @@ export interface Manifest {
   ))[];
   settings: Settings;
   kernel_sha256: Record<string, string>;
+}
+
+/**
+ * scenarios/<dataset>/compare_summary.json: windows, events and metrics of every
+ * site, copied verbatim from the terrain scenarios (no sample series). Made by
+ * `python -m scientific compare-summary`; see schemas/compare_summary.schema.json.
+ */
+export interface CompareSummarySite {
+  site_id: SiteId;
+  scenario_url: string;
+  scenario_sha256: string;
+  period: TerrainScenario['period'];
+  origin_offset_s: number;
+  end_offset_s: number;
+  windows: TerrainScenario['windows'];
+  events: VisibilityEvent[];
+  metrics: ScenarioMetrics;
+}
+
+export interface CompareSummary {
+  schema_version: '1.0';
+  kind: 'compare_summary';
+  dataset_id: string;
+  start_utc: string;
+  end_utc: string;
+  settings: { minimum_sun_fraction: number };
+  sites: CompareSummarySite[];
 }

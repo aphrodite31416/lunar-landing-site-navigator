@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Four-site comparison summary v1",
+  "description": "Windows, events and metrics copied verbatim from the terrain scenarios of one dataset, for the Compare view.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "dataset_id", "start_utc", "end_utc", "settings", "sites"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "kind": {"const": "compare_summary"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "start_utc": {"type": "string"},
+    "end_utc": {"type": "string"},
+    "settings": {
+      "type": "object", "additionalProperties": false, "required": ["minimum_sun_fraction"],
+      "properties": {"minimum_sun_fraction": {"type": "number", "minimum": 0, "maximum": 1}}
+    },
+    "sites": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/site"}}
+  },
+  "$defs": {
+    "window": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start_utc", "end_utc", "start_offset_s", "end_offset_s", "duration_s", "start_clipped", "end_clipped"],
+      "properties": {
+        "start_utc": {"type": "string"}, "end_utc": {"type": "string"},
+        "start_offset_s": {"type": "number"}, "end_offset_s": {"type": "number"},
+        "duration_s": {"type": "number", "minimum": 0},
+        "start_clipped": {"type": "boolean"}, "end_clipped": {"type": "boolean"}
+      }
+    },
+    "windows": {"type": "array", "items": {"$ref": "#/$defs/window"}},
+    "site": {
+      "type": "object", "additionalProperties": false,
+      "required": ["site_id", "scenario_url", "scenario_sha256", "period", "origin_offset_s", "end_offset_s", "windows", "events", "metrics"],
+      "properties": {
+        "site_id": {"enum": ["site01", "site04", "site07", "site11"]},
+        "scenario_url": {"type": "string"},
+        "scenario_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "period": {
+          "type": "object", "additionalProperties": false, "required": ["start_utc", "end_utc", "duration_s"],
+          "properties": {"start_utc": {"type": "string"}, "end_utc": {"type": "string"}, "duration_s": {"type": "number", "exclusiveMinimum": 0}}
+        },
+        "origin_offset_s": {"type": "number"},
+        "end_offset_s": {"type": "number"},
+        "windows": {
+          "type": "object", "additionalProperties": false,
+          "required": ["sunlight", "earth", "joint", "darkness", "insufficient_light", "earth_gap"],
+          "properties": {
+            "sunlight": {"$ref": "#/$defs/windows"}, "earth": {"$ref": "#/$defs/windows"}, "joint": {"$ref": "#/$defs/windows"},
+            "darkness": {"$ref": "#/$defs/windows"}, "insufficient_light": {"$ref": "#/$defs/windows"}, "earth_gap": {"$ref": "#/$defs/windows"}
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["kind", "active_after", "offset_s", "utc"],
+            "properties": {"kind": {"enum": ["sunlight", "earth", "darkness"]}, "active_after": {"type": "boolean"}, "offset_s": {"type": "number"}, "utc": {"type": "string"}}
+          }
+        },
+        "metrics": {"type": "object"}
+      }
+    }
+  }
+}

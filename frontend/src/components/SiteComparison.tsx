@@ -4,11 +4,14 @@ import { loadSites } from '../sites/loadSites'
 import {
   exactSeconds,
   formatDurationCompact,
-  formatLatLon,
   formatPercent,
   messageFrom,
 } from '../science/format'
 import { metricDifferences, sameValue } from '../science/timeline'
+import { groupByValue, siteList } from '../science/compare'
+import type { Clock } from '../science/clock'
+import { CompareTimelines } from './CompareTimelines'
+import { MetricDotPlot, type DotRow } from './MetricDotPlot'
 import type { Manifest, ScenarioMetrics, Site, SiteId, TerrainScenario } from '../types/science'
 
 type Better = 'max' | 'min' | null
@@ -106,10 +109,16 @@ export function SiteComparison({
   site,
   scenario,
   onSelectSite,
+  clock,
+  names,
+  onPick,
 }: {
   site: Site
   scenario: TerrainScenario | null
   onSelectSite?: (siteId: SiteId) => void
+  clock: Clock | null
+  names: Partial<Record<SiteId, string>>
+  onPick: (siteId: SiteId, clock: Clock) => void
 }) {
   const [data, setData] = useState<{ manifest: Manifest; sites: Site[] } | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -162,44 +171,71 @@ export function SiteComparison({
   const groups = groupsFor(threshold)
   const checks = consistencyWarnings(data.manifest, dataset, site, scenario)
 
-  const ranking = rankingLines(columns)
+  const ready = columns.filter((column): column is Column & { metrics: ScenarioMetrics } => column.metrics !== null)
+  const lede = ledeSentences(ready, periodS, threshold)
+  const verdicts = verdictsFor(ready, periodS)
+  const pickAtClock = (siteId: SiteId) => {
+    if (onSelectSite) onSelectSite(siteId)
+  }
 
   return (
     <>
-      <p className="terrain-science-note">
-        All four sites from the same terrain-scenario run (<code>{dataset.id}</code>): same period, same {threshold}{' '}
-        sunlight threshold.{onSelectSite && ' Select a site card or column to view it.'}
-      </p>
+      {lede.length > 0 && <p className="cmp-lede">{lede.join(' ')}</p>}
       {checks.map((warning) => (
         <p key={warning} className="terrain-science-warning">
           {warning}
         </p>
       ))}
 
-      {ranking.length > 0 && (
-        <section className="cmp-rank" aria-label="At-a-glance ranking">
-          {ranking.map((line) => (
-            <p key={line.label} className={`cmp-rank-line cmp-tone-${line.tone}`}>
-              <span className="cmp-rank-label">{line.label}</span>
-              <span className="cmp-rank-value">{line.value}</span>
-            </p>
+      <section className="cmp-section" aria-labelledby="cmp-verdicts">
+        <h2 className="cmp-h" id="cmp-verdicts">
+          At a glance
+        </h2>
+        <div className="verdicts">
+          {verdicts.map((verdict) => (
+            <div key={verdict.label} className={`verdict verdict-${verdict.tone}`}>
+              <p className="verdict-label">{verdict.label}</p>
+              {verdict.single ? (
+                <button type="button" className="verdict-win" onClick={() => pickAtClock(verdict.single as SiteId)}>
+                  {verdict.winner}
+                  <span className="verdict-place">{names[verdict.single] ?? ''}</span>
+                </button>
+              ) : (
+                <p className="verdict-win verdict-tie">
+                  {verdict.winner}
+                  <span className="verdict-place">{verdict.detail}</span>
+                </p>
+              )}
+              <p className="verdict-value">{verdict.value}</p>
+            </div>
           ))}
-        </section>
-      )}
-
-      <section className="sci-section" aria-labelledby="cmp-overview-title">
-        <h3 className="sci-section-title" id="cmp-overview-title">
-          Share of the period
-        </h3>
-        <OverviewCards
-          columns={columns}
-          selectedId={site.site_id}
-          periodS={periodS}
-          threshold={threshold}
-          onSelectSite={onSelectSite}
-        />
+        </div>
       </section>
 
+      <section className="cmp-section" aria-labelledby="cmp-timelines">
+        <div className="cmp-section-head">
+          <h2 className="cmp-h" id="cmp-timelines">
+            Four sites on one clock
+          </h2>
+          <p className="cmp-sub">The white line is the shared moment. Click any row to explore that site at that time.</p>
+        </div>
+        <CompareTimelines sites={data.sites} names={names} clock={clock} selectedId={site.site_id} onPick={onPick} />
+      </section>
+
+      <section className="cmp-section" aria-labelledby="cmp-dots">
+        <div className="cmp-section-head">
+          <h2 className="cmp-h" id="cmp-dots">
+            Durations on one scale
+          </h2>
+          <p className="cmp-sub">
+            Each dot is a site, on the full {formatDurationCompact(periodS)} period. The filled dot leads; ties share it.
+          </p>
+        </div>
+        <MetricDotPlot rows={dotRows(threshold)} columns={columns} periodS={periodS} selectedId={site.site_id} />
+      </section>
+
+      <details className="sci-details cmp-exact">
+        <summary>Exact values for every metric</summary>
       <section className="sci-section" aria-labelledby="cmp-detail-title">
         <h3 className="sci-section-title" id="cmp-detail-title">
           Detailed metrics
@@ -250,7 +286,7 @@ export function SiteComparison({
         </div>
       </section>
 
-      <ul className="terrain-track-list cmp-notes">
+        <ul className="terrain-track-list cmp-notes">
         <li>
           <span className="cmp-best-badge">Best</span> and ★ mark the leading site (ties share it); rows where all
           sites are equal are not marked. Bars are drawn against the full {formatDurationCompact(periodS)} period.
@@ -268,90 +304,8 @@ export function SiteComparison({
           <li>Sites still awaiting a terrain horizon: {dataset.missing_horizon_site_ids.join(', ')}.</li>
         )}
       </ul>
+      </details>
     </>
-  )
-}
-
-function OverviewCards({
-  columns,
-  selectedId,
-  periodS,
-  threshold,
-  onSelectSite,
-}: {
-  columns: Column[]
-  selectedId: SiteId
-  periodS: number
-  threshold: string
-  onSelectSite?: (siteId: SiteId) => void
-}) {
-  const share = (seconds: number) => (periodS > 0 ? seconds / periodS : 0)
-  const measures: { label: string; tone: Tone; value: (metrics: ScenarioMetrics) => number }[] = [
-    { label: `Sunlight ≥ ${threshold}`, tone: 'sun', value: (metrics) => metrics.sunlight_time_fraction },
-    { label: 'Earth line of sight', tone: 'earth', value: (metrics) => share(metrics.earth_visible_s) },
-    { label: 'Sunlight + Earth', tone: 'joint', value: (metrics) => share(metrics.joint_s) },
-  ]
-  const bests = measures.map((measure) =>
-    bestOf(
-      'max',
-      columns.map(({ metrics }) => (metrics ? measure.value(metrics) : null)),
-    ),
-  )
-
-  return (
-    <div className="cmp-cards">
-      {columns.map(({ site, metrics }) => {
-        const selected = site.site_id === selectedId
-        const body = (
-          <>
-            <span className="cmp-card-head">
-              <span className="cmp-card-name">{site.name}</span>
-              {selected && <span className="cmp-card-tag">Viewing</span>}
-            </span>
-            <span className="cmp-card-coords">{formatLatLon(site.latitude_deg, site.longitude_deg)}</span>
-            {metrics ? (
-              measures.map((measure, i) => {
-                const value = measure.value(metrics)
-                const best = bests[i] !== null && sameValue(value, bests[i])
-                return (
-                  <span key={measure.label} className={`cmp-measure cmp-tone-${measure.tone}`}>
-                    <span className="cmp-measure-label">{measure.label}</span>
-                    <span className="cmp-measure-value">
-                      {best && (
-                        <span className="cmp-star" title="Best of the four sites">
-                          ★<span className="sr-only"> best</span>
-                        </span>
-                      )}
-                      {formatPercent(value)}
-                    </span>
-                    <span className="cmp-bar" aria-hidden="true">
-                      <span className="cmp-bar-fill" style={{ width: `${Math.min(100, value * 100)}%` }} />
-                    </span>
-                  </span>
-                )
-              })
-            ) : (
-              <span className="cmp-card-missing">No scenario for this site</span>
-            )}
-          </>
-        )
-        return onSelectSite && !selected ? (
-          <button
-            key={site.site_id}
-            type="button"
-            className="cmp-card"
-            onClick={() => onSelectSite(site.site_id)}
-            aria-label={`View ${site.name}`}
-          >
-            {body}
-          </button>
-        ) : (
-          <div key={site.site_id} className={selected ? 'cmp-card cmp-card-selected' : 'cmp-card'}>
-            {body}
-          </div>
-        )
-      })}
-    </div>
   )
 }
 
@@ -417,32 +371,6 @@ function bestOf(better: Exclude<Better, null>, candidates: (number | null)[]) {
   return best
 }
 
-/** Short ranking lines from real scenario metrics only — no invented scores. */
-function rankingLines(columns: Column[]) {
-  const ready = columns.filter((column): column is Column & { metrics: ScenarioMetrics } => column.metrics !== null)
-  if (ready.length < 2) return []
-
-  const leaders = (
-    tone: Tone,
-    label: string,
-    pick: (metrics: ScenarioMetrics) => number,
-    better: 'max' | 'min',
-  ) => {
-    const values = ready.map(({ metrics }) => pick(metrics))
-    const best = better === 'max' ? Math.max(...values) : Math.min(...values)
-    const names = ready.filter(({ metrics }) => sameValue(pick(metrics), best)).map(({ site }) => site.name)
-    if (names.length === ready.length) return null
-    return { tone, label, value: names.join(' · ') }
-  }
-
-  return [
-    leaders('sun', 'Most continuous sunlight', (metrics) => metrics.longest_sunlight_s, 'max'),
-    leaders('earth', 'Most Earth line of sight', (metrics) => metrics.earth_visible_s, 'max'),
-    leaders('joint', 'Most joint time', (metrics) => metrics.joint_s, 'max'),
-    leaders('earth', 'Shortest Earth gap', (metrics) => metrics.longest_earth_gap_s, 'min'),
-  ].filter((line): line is { tone: Tone; label: string; value: string } => line !== null)
-}
-
 function consistencyWarnings(
   manifest: Manifest,
   dataset: NonNullable<ReturnType<typeof scenarioDatasetFor>>,
@@ -470,4 +398,92 @@ function consistencyWarnings(
     warnings.push(`The ${site.name} scenario uses a different sunlight threshold from the manifest settings.`)
   }
   return warnings
+}
+
+type ReadyColumn = Column & { metrics: ScenarioMetrics }
+
+/** Lead sentences assembled from the metrics by fixed templates; ties are stated as ties. */
+function ledeSentences(ready: ReadyColumn[], periodS: number, threshold: string) {
+  if (ready.length < 2 || periodS <= 0) return []
+  // "100.0% of the period at Sites 01, 07 and 11; 98.5% at Site 04"
+  const describe = (pick: (metrics: ScenarioMetrics) => number) =>
+    groupByValue(ready, (column) => pick(column.metrics), 'max').map(
+      (group, index) =>
+        `${formatPercent(group.value)}${index === 0 ? ' of the period' : ''} at ${siteList(group.items.map((item) => item.site.site_id))}`,
+    )
+  const spread = (pick: (metrics: ScenarioMetrics) => number) => {
+    const values = ready.map((column) => pick(column.metrics))
+    return (Math.max(...values) - Math.min(...values)) * 100
+  }
+  const sunPick = (metrics: ScenarioMetrics) => metrics.sunlight_time_fraction
+  const earthPick = (metrics: ScenarioMetrics) => metrics.earth_visible_s / periodS
+  const sun = describe(sunPick)
+  const earth = describe(earthPick)
+  const sentences = [
+    sun.length === 1
+      ? `Sunlight (at least ${threshold} of the disc) covers ${sun[0].replace(/ at .*/, '')} at every site.`
+      : `Sunlight (at least ${threshold} of the disc) covers ${sun.join('; ')}.`,
+    earth.length === 1
+      ? `Earth line of sight covers ${earth[0].replace(/ at .*/, '')} at every site.`
+      : `Earth line of sight covers ${earth.join('; ')}.`,
+  ]
+  const sunSpread = spread(sunPick)
+  const earthSpread = spread(earthPick)
+  if (!sameValue(sunSpread, earthSpread)) {
+    sentences.push(
+      earthSpread > sunSpread
+        ? `Earth line of sight separates the sites more than sunlight does: a spread of ${earthSpread.toFixed(1)} percentage points against ${sunSpread.toFixed(1)}.`
+        : `Sunlight separates the sites more than Earth line of sight does: a spread of ${sunSpread.toFixed(1)} percentage points against ${earthSpread.toFixed(1)}.`,
+    )
+  }
+  return sentences
+}
+
+type Verdict = { label: string; tone: Tone; winner: string; detail: string; single: SiteId | null; value: string }
+
+/** One leader per question; equal values are reported as a tie, never as a winner. */
+function verdictsFor(ready: ReadyColumn[], periodS: number): Verdict[] {
+  if (ready.length < 2) return []
+  const questions: {
+    label: string
+    tone: Tone
+    better: 'max' | 'min'
+    pick: (metrics: ScenarioMetrics) => number
+    show: (value: number) => string
+  }[] = [
+    { label: 'Most Earth line of sight', tone: 'earth', better: 'max', pick: (m) => m.earth_visible_s, show: (v) => `${formatPercent(v / periodS)} of the period` },
+    { label: 'Longest joint window', tone: 'joint', better: 'max', pick: (m) => m.longest_joint_s, show: (v) => `${formatDurationCompact(v)} unbroken` },
+    { label: 'Shortest Earth gap', tone: 'earth', better: 'min', pick: (m) => m.longest_earth_gap_s, show: (v) => `${formatDurationCompact(v)} longest gap` },
+    { label: 'Most sunlight', tone: 'sun', better: 'max', pick: (m) => m.sunlight_s, show: (v) => `${formatPercent(v / periodS)} of the period` },
+  ]
+  const tieWords = ['', '', 'Two-way tie', 'Three-way tie', 'Four-way tie']
+  return questions.map((question) => {
+    const groups = groupByValue(ready, (column) => question.pick(column.metrics), question.better)
+    const lead = groups[0]
+    const ids = lead.items.map((item) => item.site.site_id)
+    if (groups.length === 1) {
+      return { label: question.label, tone: question.tone, winner: 'Equal at every site', detail: '', single: null, value: question.show(lead.value) }
+    }
+    return {
+      label: question.label,
+      tone: question.tone,
+      winner: ids.length === 1 ? siteList(ids) : (tieWords[ids.length] ?? 'Tie'),
+      detail: ids.length === 1 ? '' : siteList(ids),
+      single: ids.length === 1 ? ids[0] : null,
+      value: question.show(lead.value),
+    }
+  })
+}
+
+function dotRows(threshold: string): DotRow[] {
+  return [
+    { label: 'Earth line of sight', better: 'max', tone: 'earth', value: (m) => m.earth_visible_s },
+    { label: 'Longest Earth gap', better: 'min', tone: 'earth', value: (m) => m.longest_earth_gap_s },
+    { label: 'Joint time', better: 'max', tone: 'joint', value: (m) => m.joint_s },
+    { label: 'Longest joint window', better: 'max', tone: 'joint', value: (m) => m.longest_joint_s },
+    { label: 'Sunlight', better: 'max', tone: 'sun', value: (m) => m.sunlight_s },
+    { label: 'Longest sunlight', better: 'max', tone: 'sun', value: (m) => m.longest_sunlight_s },
+    { label: `Longest below ${threshold}`, better: 'min', tone: 'sun', value: (m) => m.longest_insufficient_light_s },
+    { label: 'Longest darkness', better: 'min', tone: 'sun', value: (m) => m.longest_darkness_s },
+  ]
 }
