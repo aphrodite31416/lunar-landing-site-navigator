@@ -1,2 +1,6 @@
 # Preserve upstream NASA kernels byte for byte, including spaces in comments.
 data/kernels/* -text -whitespace
+
+# Scenario JSON is hashed for Compare-summary integrity; keep LF bytes stable on Windows.
+data/processed/scenarios/** -text
+data/processed/scenarios/** -whitespace
