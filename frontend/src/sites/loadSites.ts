@@ -1,10 +1,12 @@
+import { loadManifest, manifestUrl } from './loadManifest'
 import type { Site } from '../types/science'
 
 let sitesRequest: Promise<Site[]> | null = null
 
 export function loadSites(): Promise<Site[]> {
   if (sitesRequest) return sitesRequest
-  const pending = fetch('/data/sites.json').then(async (response) => {
+  const pending = loadManifest().then(async (manifest) => {
+    const response = await fetch(new URL(manifest.sites_url, manifestUrl()))
     if (!response.ok) {
       throw new Error(`Could not load sites (${response.status})`)
     }

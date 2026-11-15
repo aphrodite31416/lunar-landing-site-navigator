@@ -1,3 +1,4 @@
+import { manifestUrl } from './loadManifest'
 import type { TerrainScenario } from '../types/science'
 
 const scenarioCache = new Map<string, Promise<TerrainScenario>>()
@@ -5,8 +6,7 @@ const scenarioCache = new Map<string, Promise<TerrainScenario>>()
 const windowKinds = ['sunlight', 'earth', 'joint', 'darkness', 'insufficient_light', 'earth_gap'] as const
 
 export function loadScenario(scenarioUrl: string): Promise<TerrainScenario> {
-  const manifestUrl = new URL('data/manifest.json', document.baseURI)
-  const url = new URL(scenarioUrl, manifestUrl)
+  const url = new URL(scenarioUrl, manifestUrl())
   const cached = scenarioCache.get(url.href)
   if (cached) return cached
 

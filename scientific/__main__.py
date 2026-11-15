@@ -13,6 +13,7 @@ from .planner import Mission
 from .ephemeris import fetch_kernels
 from .validation import convergence_report, validate_handoffs
 from .frontend_validation import terrain_asset_names, validate_frontend, validate_terrain_assets
+from .compare_summary import validate_compare_summary, write_compare_summary
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -51,6 +52,8 @@ def main(argv=None):
     sync.add_argument("--source", type=Path, default=ROOT / "data/processed")
     sync.add_argument("--terrain-source", type=Path, default=ROOT / "data/terrain")
     sync.add_argument("--destination", type=Path, default=ROOT / "frontend/public/data")
+    summary = commands.add_parser("compare-summary", help="Write and validate the lightweight four-site Compare summary.")
+    summary.add_argument("--source", type=Path, default=ROOT / "data/processed")
     frontend_check = commands.add_parser("validate-frontend", help="Check the complete four-site JSON/terrain handoff.")
     frontend_check.add_argument("--source", type=Path, default=ROOT / "data/processed")
     frontend_check.add_argument("--terrain-source", type=Path, default=ROOT / "data/terrain")
@@ -74,6 +77,9 @@ def main(argv=None):
             manifest = read_json(args.source / "manifest.json")
             if manifest["status"] == "ready":
                 validate_frontend(args.source, ROOT / "schemas/scenario.schema.json")
+                # Deterministic: rewriting an up-to-date summary leaves its bytes unchanged.
+                write_compare_summary(args.source)
+                validate_compare_summary(args.source, ROOT / "schemas/compare_summary.schema.json")
             names = terrain_asset_names(args.terrain_source)
             shutil.copytree(args.source, args.destination, dirs_exist_ok=True)
             terrain = args.destination / "terrain"
@@ -81,9 +87,14 @@ def main(argv=None):
             for name in names:
                 shutil.copy2(args.terrain_source / name, terrain / name)
             print(f"Frontend data: {args.destination} (terrain: {len(names)} files in {terrain})")
+        elif args.command == "compare-summary":
+            path = write_compare_summary(args.source)
+            report = validate_compare_summary(args.source, ROOT / "schemas/compare_summary.schema.json")
+            print(json.dumps({**report, "output": str(path)}))
         elif args.command == "validate-frontend":
             report = validate_frontend(args.source, ROOT / "schemas/scenario.schema.json")
             report["terrain_assets"] = validate_terrain_assets(args.terrain_source)
+            report["compare_summary"] = validate_compare_summary(args.source, ROOT / "schemas/compare_summary.schema.json")
             if args.output:
                 write_json(args.output, report)
             print(json.dumps(report))

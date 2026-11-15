@@ -7,6 +7,23 @@ export function formatUtc(utc: string) {
   return `${match[1]} ${match[2]} UTC`
 }
 
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+/** "Nov 16, 12:54 UTC" — minutes truncated; pair with the full value in a title. */
+export function formatUtcShort(utc: string) {
+  const match = isoUtc.exec(utc)
+  if (!match) return utc
+  const [, date, time] = match
+  const month = monthNames[Number(date.slice(5, 7)) - 1]
+  return `${month} ${Number(date.slice(8, 10))}, ${time.slice(0, 5)} UTC`
+}
+
+/** Month and day of a UTC instant in milliseconds, without the browser time zone. */
+export function formatUtcDay(ms: number) {
+  const iso = new Date(ms).toISOString()
+  return `${monthNames[Number(iso.slice(5, 7)) - 1]} ${Number(iso.slice(8, 10))}`
+}
+
 const units: [number, string][] = [
   [86400, 'd'],
   [3600, 'h'],
@@ -46,6 +63,23 @@ export function exactSeconds(seconds: number) {
 
 export function formatPercent(fraction: number, digits = 1) {
   return `${(fraction * 100).toFixed(digits)}%`
+}
+
+/** A percentage with enough digits that it never rounds onto the threshold it is compared with. */
+export function formatPercentVersus(fraction: number, threshold: number, digits = 1) {
+  if (fraction === threshold) return formatPercent(fraction, digits)
+  for (let d = digits; d <= 4; d++) {
+    const text = formatPercent(fraction, d)
+    if (text !== formatPercent(threshold, d)) return text
+  }
+  return `${fraction < threshold ? '<' : '>'} ${formatPercent(threshold, 4)}`
+}
+
+/** Planetocentric latitude and east-positive longitude as hemisphere text. */
+export function formatLatLon(latitudeDeg: number, longitudeDeg: number) {
+  const lat = `${Math.abs(latitudeDeg).toFixed(2)}° ${latitudeDeg < 0 ? 'S' : 'N'}`
+  const lon = `${Math.abs(longitudeDeg).toFixed(2)}° ${longitudeDeg < 0 ? 'W' : 'E'}`
+  return `${lat}, ${lon}`
 }
 
 export function formatAngle(value: number | null) {

@@ -1,114 +1,228 @@
-import type { KeyboardEvent } from 'react'
-import { formatAngle, formatDuration, formatPercent, formatUtc, exactSeconds } from '../science/format'
+import type { MouseEvent } from 'react'
+import { sampleIndexAt } from '../science/clock'
+import { thresholdLabel } from './timeControls'
 import {
+  exactSeconds,
+  formatAngle,
+  formatDuration,
+  formatPercent,
+  formatPercentVersus,
+  formatUtc,
+  formatUtcDay,
+} from '../science/format'
+import {
+  dayTicks,
   describeEvent,
   eventKindLabel,
-  inWindows,
-  nearestSampleIndex,
   nextEvent,
-  previousEvent,
   type EventKind,
 } from '../science/timeline'
 import type { TerrainScenario, VisibilityEvent, VisibilitySample, VisibilityWindow } from '../types/science'
 
-const hour = 3600
-const day = 86400
 const eventKinds: EventKind[] = ['sunlight', 'earth', 'darkness']
 
-export function ScenarioTimeline({
+/** Level-3 detail: windows, events, every value at the nearest sample. */
+export function ScenarioDetails({
   scenario,
-  index,
-  onIndex,
+  offsetS,
+  onSeek,
 }: {
   scenario: TerrainScenario
-  index: number
-  onIndex: (index: number) => void
+  offsetS: number
+  onSeek: (offsetS: number) => void
 }) {
   const series = scenario.series
-  const last = series.length - 1
-  const current = Math.min(Math.max(index, 0), last)
-  const sample = series[current]
-  const offset = sample.offset_s
-  const origin = series[0].offset_s
-  const threshold = formatPercent(scenario.model.settings.minimum_sun_fraction, 0)
-  const earlier = previousEvent(scenario.events, offset)
-  const later = nextEvent(scenario.events, offset)
+  const index = sampleIndexAt(scenario, offsetS)
+  const sample = series[index]
+  const threshold = thresholdLabel(scenario)
+  return (
+    <>
+      <details className="sci-details">
+        <summary>Windows and events</summary>
+        <NextEvents events={scenario.events} offsetS={offsetS} threshold={threshold} />
+        <WindowLists scenario={scenario} threshold={threshold} onGo={onSeek} />
+        <EventList events={scenario.events} threshold={threshold} onGo={onSeek} />
+      </details>
 
-  const goToIndex = (next: number) => onIndex(Math.min(Math.max(next, 0), last))
-  const goToOffset = (target: number) => onIndex(nearestSampleIndex(series, target))
+      <details className="sci-details">
+        <summary>All measured values</summary>
+        <p className="terrain-science-note">
+          Measured at the exported sample {formatUtc(sample.utc)}
+          {sample.offset_s === offsetS
+            ? ', which is exactly the selected moment.'
+            : `, ${formatDuration(Math.abs(sample.offset_s - offsetS))} ${sample.offset_s < offsetS ? 'before' : 'after'} the selected moment. Sunlight, Earth and joint states use the exact selected moment; if a window boundary lies between the two, the sample on the same side as the selected moment is shown.`}
+        </p>
+        <SampleSpacing series={series} index={index} origin={series[0].offset_s} />
+        <SampleReadout sample={sample} minimum={scenario.model.settings.minimum_sun_fraction} />
+      </details>
 
-  function onSliderKey(event: KeyboardEvent<HTMLInputElement>) {
-    const moves: Record<string, () => void> = {
-      ArrowLeft: () => goToIndex(current - 1),
-      ArrowDown: () => goToIndex(current - 1),
-      ArrowRight: () => goToIndex(current + 1),
-      ArrowUp: () => goToIndex(current + 1),
-      PageDown: () => goToOffset(offset - hour),
-      PageUp: () => goToOffset(offset + hour),
-      Home: () => goToIndex(0),
-      End: () => goToIndex(last),
-    }
-    const move = moves[event.key]
-    if (!move) return
-    event.preventDefault()
-    move()
+      <details className="sci-details">
+        <summary>How visibility is determined</summary>
+        <VisibilityDefinitions scenario={scenario} />
+      </details>
+    </>
+  )
+}
+
+export function VisibilityDefinitions({ scenario }: { scenario: TerrainScenario }) {
+  const threshold = thresholdLabel(scenario)
+  return (
+    <ul className="sci-explain">
+      <li>
+        <strong className="tone-sun">Sunlight</strong> is available when at least {threshold} of the solar disc (
+        {scenario.model.settings.disc_samples.toLocaleString('en-US')} sampled points) is above the local terrain
+        horizon and not hidden by Earth.
+      </li>
+      <li>
+        <strong className="tone-earth">Earth line of sight</strong> means Earth&apos;s centre is strictly above the
+        terrain horizon. It is geometric visibility, not a guaranteed radio link.
+      </li>
+      <li>
+        <strong className="tone-joint">Joint</strong> means both hold at the same time.
+      </li>
+      <li>
+        States follow the precomputed windows at the exact selected moment; exactly at an event time they show the
+        state after the event. Angles and fractions come from the nearest exported sample (samples are refined near
+        events, so they are unevenly spaced).
+      </li>
+    </ul>
+  )
+}
+
+type Tone = 'sun' | 'earth' | 'joint' | 'low' | 'dark' | 'gap'
+type Scale = { origin: number; duration: number }
+
+export function TimelineChart({
+  scenario,
+  offsetS,
+  threshold,
+  onGo,
+}: {
+  scenario: TerrainScenario
+  offsetS: number
+  threshold: string
+  onGo: (offsetS: number) => void
+}) {
+  const scale: Scale = { origin: scenario.series[0].offset_s, duration: scenario.period.duration_s }
+  const ticks = dayTicks(scenario.period, scale.origin)
+  const byKind = (kind: EventKind) => scenario.events.filter((event) => event.kind === kind)
+  const windows = scenario.windows
+  const allLanes: { label: string; title: string; tone: Tone; windows: VisibilityWindow[]; events?: VisibilityEvent[] }[] = [
+    { label: 'Sunlight', title: `Sunlight (≥ ${threshold} of disc)`, tone: 'sun', windows: windows.sunlight, events: byKind('sunlight') },
+    { label: 'Earth', title: 'Earth line of sight', tone: 'earth', windows: windows.earth, events: byKind('earth') },
+    { label: 'Joint', title: 'Joint (sunlight and Earth)', tone: 'joint', windows: windows.joint },
+    { label: `< ${threshold}`, title: `Insufficient light (< ${threshold})`, tone: 'low', windows: windows.insufficient_light },
+    { label: 'Darkness', title: 'Darkness (no disc visible)', tone: 'dark', windows: windows.darkness, events: byKind('darkness') },
+  ]
+  // Sun, Earth and Joint always; insufficient light and darkness only when they occur.
+  const lanes = allLanes.filter((lane, index) => index < 3 || lane.windows.length > 0)
+
+  function seek(event: MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    if (rect.width <= 0) return
+    const fraction = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1)
+    onGo(scale.origin + fraction * scale.duration)
   }
 
   return (
-    <>
-      <label className="terrain-science-time">
-        Time (UTC)
-        <span className="terrain-exaggeration-row">
-          <input
-            type="range"
-            min={origin}
-            max={series[last].offset_s}
-            step="any"
-            value={offset}
-            aria-valuetext={formatUtc(sample.utc)}
-            onChange={(event) => goToOffset(Number(event.target.value))}
-            onKeyDown={onSliderKey}
-          />
-        </span>
-      </label>
-      <div className="terrain-science-buttons">
-        <button type="button" className="terrain-info-toggle" onClick={() => goToOffset(offset - day)}>
-          −1 d
-        </button>
-        <button type="button" className="terrain-info-toggle" onClick={() => goToOffset(offset - hour)}>
-          −1 h
-        </button>
-        <button type="button" className="terrain-info-toggle" onClick={() => goToOffset(offset + hour)}>
-          +1 h
-        </button>
-        <button type="button" className="terrain-info-toggle" onClick={() => goToOffset(offset + day)}>
-          +1 d
-        </button>
-        <button
-          type="button"
-          className="terrain-info-toggle"
-          disabled={!earlier}
-          onClick={() => earlier && goToOffset(earlier.offset_s)}
-        >
-          ◀ Event
-        </button>
-        <button
-          type="button"
-          className="terrain-info-toggle"
-          disabled={!later}
-          onClick={() => later && goToOffset(later.offset_s)}
-        >
-          Event ▶
-        </button>
+    <div className="tl-chart">
+      <div className="tl-labels" aria-hidden="true">
+        {lanes.map((lane, index) => (
+          <span key={lane.title} className={`tl-label tone-${lane.tone}${index > 2 ? ' tl-extra' : ''}`} title={lane.title}>
+            {lane.label}
+          </span>
+        ))}
       </div>
-      <p className="terrain-science-utc" title={sample.utc}>
-        {formatUtc(sample.utc)}
+      {/* Pointer shortcut only; the time slider above is the keyboard-accessible control. */}
+      <div className="tl-plot" onClick={seek} aria-hidden="true">
+        <div className="tl-rail">
+          {scenario.events.map((event) => (
+            <span
+              key={`${event.kind}-${event.offset_s}`}
+              className={`tl-mark tl-mark-${event.kind}${event.active_after ? ' tl-mark-on' : ''}`}
+              style={{ left: `${percent(event.offset_s, scale)}%` }}
+              title={`${describeEvent(event, threshold)} · ${formatUtc(event.utc)}`}
+            />
+          ))}
+        </div>
+        {ticks.map((tick) => (
+          <span
+            key={tick.ms}
+            className={tick.index % 5 === 0 ? 'tl-grid tl-grid-major' : 'tl-grid'}
+            style={{ left: `${percent(tick.offset_s, scale)}%` }}
+          />
+        ))}
+        {lanes.map((lane, index) => (
+          <div key={lane.title} className={index > 2 ? 'tl-lane tl-extra' : 'tl-lane'}>
+            {lane.windows.map((window) => (
+              <span
+                key={`${window.start_offset_s}-${window.end_offset_s}`}
+                className={windowClass(window, lane.tone)}
+                style={windowStyle(window, scale)}
+              />
+            ))}
+          </div>
+        ))}
+        <span className="tl-now" style={{ left: `${percent(offsetS, scale)}%` }} />
+      </div>
+      <div className="tl-axis" aria-hidden="true">
+        {ticks
+          .filter((tick) => tick.index % 5 === 0)
+          .map((tick) => (
+            <span key={tick.ms} style={{ left: `${percent(tick.offset_s, scale)}%` }}>
+              {formatUtcDay(tick.ms)}
+            </span>
+          ))}
+      </div>
+      <p className="tl-caption">
+        Bars are the precomputed windows; triangles above them mark events (filled when a state begins). Dashed ends touch the edge of the analysis
+        period, so the window may continue beyond it. Click the chart to jump to a time.
       </p>
-      <SampleSpacing series={series} index={current} origin={origin} />
-      <StateChips scenario={scenario} offsetS={offset} threshold={threshold} />
-      <SampleReadout sample={sample} />
-      <NextEvents events={scenario.events} offsetS={offset} threshold={threshold} />
-      <WindowTracks scenario={scenario} offsetS={offset} threshold={threshold} onGo={goToOffset} />
+    </div>
+  )
+}
+
+function WindowLists({
+  scenario,
+  threshold,
+  onGo,
+}: {
+  scenario: TerrainScenario
+  threshold: string
+  onGo: (offsetS: number) => void
+}) {
+  const windows = scenario.windows
+  const lists: { name: string; windows: VisibilityWindow[] }[] = [
+    { name: `Sunlight (≥ ${threshold} of disc)`, windows: windows.sunlight },
+    { name: 'Earth line of sight', windows: windows.earth },
+    { name: 'Joint (sunlight and Earth)', windows: windows.joint },
+    { name: `Insufficient light (< ${threshold})`, windows: windows.insufficient_light },
+    { name: 'Darkness (no disc visible)', windows: windows.darkness },
+    { name: 'Earth gap', windows: windows.earth_gap },
+  ]
+  return (
+    <>
+      <p className="terrain-science-note">Select a window to move the timeline to its start.</p>
+      {lists.map((list) => (
+        <div key={list.name} className="terrain-track-block">
+          <p className="terrain-track-name">{list.name}</p>
+          {list.windows.length === 0 ? (
+            <p className="terrain-science-note">None in this period.</p>
+          ) : (
+            <ul className="terrain-track-list">
+              {list.windows.map((window) => (
+                <li key={`${window.start_utc}-${window.end_utc}`}>
+                  <button type="button" className="terrain-link" onClick={() => onGo(window.start_offset_s)}>
+                    {formatUtc(window.start_utc)} – {formatUtc(window.end_utc)}
+                  </button>{' '}
+                  · <span title={exactSeconds(window.duration_s)}>{formatDuration(window.duration_s)}</span>
+                  {clipLabel(window)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
     </>
   )
 }
@@ -120,41 +234,17 @@ function SampleSpacing({ series, index, origin }: { series: VisibilitySample[]; 
   return (
     <p className="terrain-science-note">
       Sample {index + 1} of {series.length}, {formatDuration(offset - origin)} after the period start. Gap to the
-      previous / next sample: {before} / {after}. Samples are refined near events, so they are unevenly spaced; the
-      slider snaps to the nearest exported sample.
+      previous / next sample: {before} / {after}.
     </p>
   )
 }
 
-function StateChips({ scenario, offsetS, threshold }: { scenario: TerrainScenario; offsetS: number; threshold: string }) {
-  const sunlit = inWindows(scenario.windows.sunlight, offsetS)
-  const dark = inWindows(scenario.windows.darkness, offsetS)
-  const earth = inWindows(scenario.windows.earth, offsetS)
-  const joint = inWindows(scenario.windows.joint, offsetS)
-  return (
-    <>
-      <div className="terrain-science-chips">
-        <p className={sunlit ? 'terrain-chip terrain-chip-on' : 'terrain-chip'}>
-          {sunlit ? 'Sunlight available' : dark ? 'Darkness' : `Below ${threshold} disc`}
-        </p>
-        <p className={earth ? 'terrain-chip terrain-chip-on' : 'terrain-chip'}>
-          {earth ? 'Earth in line of sight' : 'No Earth line of sight'}
-        </p>
-        <p className={joint ? 'terrain-chip terrain-chip-on' : 'terrain-chip'}>{joint ? 'Joint' : 'Not joint'}</p>
-      </div>
-      <p className="terrain-science-note">
-        States follow the precomputed windows; at an event time they show the state after the event.
-      </p>
-    </>
-  )
-}
-
-function SampleReadout({ sample }: { sample: VisibilitySample }) {
+function SampleReadout({ sample, minimum }: { sample: VisibilitySample; minimum: number }) {
   return (
     <dl>
       <div>
         <dt>Solar disc visible</dt>
-        <dd>{formatPercent(sample.sun_visible_fraction)}</dd>
+        <dd>{formatPercentVersus(sample.sun_visible_fraction, minimum)}</dd>
       </div>
       <div>
         <dt>Disc above terrain</dt>
@@ -230,99 +320,6 @@ function NextEvents({ events, offsetS, threshold }: { events: VisibilityEvent[];
   )
 }
 
-function WindowTracks({
-  scenario,
-  offsetS,
-  threshold,
-  onGo,
-}: {
-  scenario: TerrainScenario
-  offsetS: number
-  threshold: string
-  onGo: (offsetS: number) => void
-}) {
-  const scale = { origin: scenario.series[0].offset_s, duration: scenario.period.duration_s }
-  const playhead = percent(offsetS, scale)
-  const byKind = (kind: EventKind) => scenario.events.filter((event) => event.kind === kind)
-  const tracks: { name: string; windows: VisibilityWindow[]; events?: VisibilityEvent[] }[] = [
-    { name: `Sunlight (≥ ${threshold} of disc)`, windows: scenario.windows.sunlight, events: byKind('sunlight') },
-    { name: 'Earth line of sight', windows: scenario.windows.earth, events: byKind('earth') },
-    { name: 'Joint (sunlight and Earth)', windows: scenario.windows.joint },
-    { name: `Insufficient light (< ${threshold})`, windows: scenario.windows.insufficient_light },
-    { name: 'Darkness (no disc visible)', windows: scenario.windows.darkness, events: byKind('darkness') },
-    { name: 'Earth gap', windows: scenario.windows.earth_gap },
-  ]
-
-  return (
-    <div className="terrain-tracks">
-      <p className="terrain-science-note">
-        Bars come from the precomputed window lists. A dashed end touches the edge of the analysis period, so the
-        real start or end may lie outside it. Select a window to move the timeline to its start.
-      </p>
-      {tracks.map((track) => (
-        <WindowTrack key={track.name} {...track} scale={scale} playhead={playhead} onGo={onGo} />
-      ))}
-      <EventList events={scenario.events} threshold={threshold} onGo={onGo} />
-    </div>
-  )
-}
-
-type Scale = { origin: number; duration: number }
-
-function WindowTrack({
-  name,
-  windows,
-  scale,
-  playhead,
-  onGo,
-  events = [],
-}: {
-  name: string
-  windows: VisibilityWindow[]
-  scale: Scale
-  playhead: number
-  onGo: (offsetS: number) => void
-  events?: VisibilityEvent[]
-}) {
-  return (
-    <div className="terrain-track-block">
-      <p className="terrain-track-name">{name}</p>
-      <div className="terrain-track" aria-hidden="true">
-        {windows.map((window) => (
-          <span
-            key={`${window.start_offset_s}-${window.end_offset_s}`}
-            className={windowClass(window)}
-            style={windowStyle(window, scale)}
-          />
-        ))}
-        {events.map((event) => (
-          <span
-            key={`${event.kind}-${event.offset_s}`}
-            className="terrain-track-event"
-            style={{ left: `${percent(event.offset_s, scale)}%` }}
-          />
-        ))}
-        <span className="terrain-track-now" style={{ left: `${playhead}%` }} />
-      </div>
-      {windows.length === 0 ? (
-        <p className="terrain-science-note">None in this period.</p>
-      ) : (
-        <ul className="terrain-track-list">
-          {windows.map((window) => (
-            <li key={`${window.start_utc}-${window.end_utc}`}>
-              <button type="button" className="terrain-link" onClick={() => onGo(window.start_offset_s)}>
-                {formatUtc(window.start_utc)} – {formatUtc(window.end_utc)}
-              </button>{' '}
-              · <span title={exactSeconds(window.duration_s)}>{formatDuration(window.duration_s)}</span>
-              {clipLabel(window)}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
-}
-
 function EventList({
   events,
   threshold,
@@ -354,10 +351,10 @@ function EventList({
   )
 }
 
-function windowClass(window: VisibilityWindow) {
-  const classes = ['terrain-track-window']
-  if (window.start_clipped) classes.push('terrain-track-start-clipped')
-  if (window.end_clipped) classes.push('terrain-track-end-clipped')
+function windowClass(window: VisibilityWindow, tone: Tone) {
+  const classes = ['tl-win', `tl-win-${tone}`]
+  if (window.start_clipped) classes.push('tl-start-clipped')
+  if (window.end_clipped) classes.push('tl-end-clipped')
   return classes.join(' ')
 }
 

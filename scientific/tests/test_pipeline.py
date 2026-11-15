@@ -110,6 +110,9 @@ class DataTests(unittest.TestCase):
             schema = json.loads((ROOT / "schemas/scenario.schema.json").read_text())
             validator = Draft202012Validator(schema)
             for scenario in output.glob("scenarios/*/*.json"):
+                # compare_summary.json lives beside scenarios but uses its own schema.
+                if scenario.name == "compare_summary.json":
+                    continue
                 validator.validate(json.loads(scenario.read_text()))
             for alternate in output.glob("sensitivity/*.json"):
                 validator.validate(json.loads(alternate.read_text()))

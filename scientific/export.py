@@ -13,6 +13,7 @@ from .planner import Mission, plan
 from .ephemeris import KernelPool, SpiceClock, SpiceProvider, geometry_json
 from .historical import export_history
 from .handoff import export_examples
+from .compare_summary import write_compare_summary
 
 
 def build(root, horizons=None, output=None, kernel_dir=None, settings=None, mission=None,
@@ -122,4 +123,7 @@ def build(root, horizons=None, output=None, kernel_dir=None, settings=None, miss
                 "sites_url": "sites.json", "planner_url": "planner.json", "examples_url": examples_url, "datasets": datasets,
                 "settings": asdict(settings), "kernel_sha256": kernel_hashes}
     write_json(output / "manifest.json", manifest)
+    if manifest["status"] == "ready":
+        # Windows, events and metrics only, copied verbatim, for the frontend Compare view.
+        write_compare_summary(output)
     return manifest
