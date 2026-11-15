@@ -90,6 +90,17 @@ body {
   max-height: calc(100svh - 32px);
 }
 
+.terrain-site-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: min(28rem, calc(100vw - 32px));
+}
+
+.terrain-site-selector button[aria-pressed='true'] {
+  border-color: #f5b000;
+}
+
 .terrain-hud-actions {
   display: flex;
   gap: 8px;
@@ -157,6 +168,141 @@ body {
   line-height: 1.4;
   white-space: nowrap;
   pointer-events: none;
+}
+
+.terrain-science {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1;
+  box-sizing: border-box;
+  width: min(22rem, calc(100vw - 32px));
+  max-height: min(46svh, 24rem);
+  overflow: auto;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.terrain-science-title,
+.terrain-science-utc {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.terrain-science-period,
+.terrain-science-note {
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.terrain-science-time {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.terrain-science-time input[type='range'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.terrain-science-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.terrain-chip {
+  margin: 0;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.terrain-chip-on {
+  border-color: #f5b000;
+}
+
+.terrain-science dl {
+  margin: 0;
+}
+
+.terrain-science dl div {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 8px;
+}
+
+.terrain-science dt {
+  color: var(--text);
+}
+
+.terrain-science dd {
+  margin: 0;
+}
+
+.terrain-track-block {
+  margin-bottom: 8px;
+}
+
+.terrain-track-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.terrain-track {
+  position: relative;
+  height: 12px;
+  margin: 4px 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.terrain-track-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: #f5b000;
+}
+
+.terrain-track-start-clipped {
+  border-left: 3px dashed #16171d;
+}
+
+.terrain-track-end-clipped {
+  border-right: 3px dashed #16171d;
+}
+
+.terrain-track-event,
+.terrain-track-now {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+}
+
+.terrain-track-event {
+  background: #f3f4f6;
+}
+
+.terrain-track-now {
+  background: #c084fc;
+}
+
+.terrain-track-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text);
+  font-size: 13px;
 }
 
 .terrain-note {

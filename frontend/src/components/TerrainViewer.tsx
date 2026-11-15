@@ -2,8 +2,11 @@ import { OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { SRGBColorSpace, DoubleSide, TextureLoader, Vector3, type Texture } from 'three'
+import { SiteScience } from './SiteScience'
+import { loadSites } from '../sites/loadSites'
 import { buildTerrainGeometry, nearestSiteVertex, type TerrainMesh } from '../terrain/buildGeometry'
 import { loadHeightData, loadTerrainMeta } from '../terrain/loadTerrain'
+import type { Site, SiteId } from '../types/science'
 import type { HeightSummary, TerrainMeta } from '../terrain/types'
 
 export function TerrainViewer() {
@@ -16,14 +19,41 @@ export function TerrainViewer() {
   const [hillshade, setHillshade] = useState<Texture | null>(null)
   const [infoOpen, setInfoOpen] = useState(false)
   const [exaggeration, setExaggeration] = useState(1)
+  const [sites, setSites] = useState<Site[]>([])
+  const [sitesError, setSitesError] = useState<string | null>(null)
+  const [selectedSiteId, setSelectedSiteId] = useState<SiteId>('site01')
+  const [loadedSiteId, setLoadedSiteId] = useState<SiteId | null>(null)
+  const selectedSite = sites.find((site) => site.site_id === selectedSiteId) ?? null
   const siteLabelRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<ViewControls | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    loadTerrainMeta()
+    loadSites()
+      .then((loaded) => {
+        if (!cancelled) setSites(loaded)
+      })
+      .catch((caught: unknown) => {
+        if (!cancelled) setSitesError(messageFrom(caught, 'Could not load the site list'))
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    setError(null)
+    setHeightError(null)
+    setTerrain(null)
+    setHeight(null)
+    setSamples(null)
+    setMesh(null)
+    setLoadedSiteId(null)
+    loadTerrainMeta(selectedSiteId)
       .then((meta) => {
         if (cancelled) return
+        setLoadedSiteId(selectedSiteId)
         setTerrain(meta)
         const nearest = nearestSiteVertex(meta)
         return loadHeightData(meta, nearest.column, nearest.row)
@@ -42,7 +72,7 @@ export function TerrainViewer() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [selectedSiteId])
 
   useEffect(() => {
     if (!terrain || !samples) return
@@ -74,6 +104,20 @@ export function TerrainViewer() {
   return (
     <div className="terrain-viewer">
       <div className="terrain-hud">
+        <div className="terrain-site-selector" role="group" aria-label="Landing sites">
+          {sites.map((site) => (
+            <button
+              key={site.site_id}
+              type="button"
+              className="terrain-info-toggle"
+              aria-pressed={site.site_id === selectedSiteId}
+              onClick={() => setSelectedSiteId(site.site_id)}
+            >
+              {site.name}
+            </button>
+          ))}
+        </div>
+        {sitesError && <p className="terrain-readout-status">{sitesError}</p>}
         <div className="terrain-hud-actions">
           <button
             type="button"
@@ -118,10 +162,11 @@ export function TerrainViewer() {
           </aside>
         )}
       </div>
+      {selectedSite && <SiteScience site={selectedSite} />}
       <p className="terrain-note">Hillshade: visual only, synthetic light (not the real Sun)</p>
-      {terrain && (
+      {terrain && loadedSiteId && (
         <div ref={siteLabelRef} className="terrain-site-label">
-          Site01 landing point
+          Site{loadedSiteId.slice(4)} landing point
         </div>
       )}
       <Canvas camera={{ position: [0, 8000, 22000], fov: 45, near: 1, far: 400000 }}>

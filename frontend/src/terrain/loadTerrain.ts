@@ -1,4 +1,5 @@
 import { decode } from 'fast-png'
+import type { SiteId } from '../types/science'
 import { elevationFromDn } from './elevation'
 import type { HeightSummary, TerrainMeta } from './types'
 
@@ -7,8 +8,8 @@ export type HeightData = {
   samples: Uint16Array
 }
 
-export async function loadTerrainMeta(): Promise<TerrainMeta> {
-  const response = await fetch('/terrain/site_01_terrain.json')
+export async function loadTerrainMeta(siteId: SiteId): Promise<TerrainMeta> {
+  const response = await fetch(`/terrain/site_${siteId.slice(4)}_terrain.json`)
   if (!response.ok) {
     throw new Error(`Could not load terrain JSON (${response.status})`)
   }
