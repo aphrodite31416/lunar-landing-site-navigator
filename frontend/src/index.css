@@ -69,41 +69,90 @@ body {
 }
 
 .terrain-viewer {
-  position: relative;
+  --text: #c5c8d4;
+  --text-h: #f4f1ea;
+  --bg: #12141c;
+  --border: #2c3142;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100svh;
+  background: #0c0e14;
+  color: var(--text-h);
+  font-size: 14px;
 }
 
+.terrain-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  background: #12141c;
+  border-bottom: 1px solid var(--border);
+}
+
+.terrain-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.terrain-stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.terrain-stage > div:last-child,
 .terrain-viewer canvas {
+  width: 100%;
+  height: 100%;
   display: block;
 }
 
-.terrain-hud {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  max-height: calc(100svh - 32px);
+.terrain-side {
+  box-sizing: border-box;
+  width: 360px;
+  flex: 0 0 360px;
+  overflow: auto;
+  padding: 12px;
+  background: #12141c;
+  border-left: 1px solid var(--border);
+  color: var(--text-h);
+  font-size: 14px;
 }
 
 .terrain-site-selector {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-width: min(28rem, calc(100vw - 32px));
 }
 
-.terrain-site-selector button[aria-pressed='true'] {
+.terrain-site-selector button[aria-pressed='true'],
+.terrain-info-toggle[aria-pressed='true'] {
   border-color: #f5b000;
+  color: #fff4d6;
 }
 
 .terrain-hud-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  margin-left: auto;
+}
+
+.terrain-corner {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(18rem, calc(100% - 24px));
 }
 
 .terrain-exaggeration {
@@ -111,11 +160,11 @@ body {
   flex-direction: column;
   gap: 6px;
   box-sizing: border-box;
-  width: min(22rem, calc(100vw - 32px));
+  width: auto;
   padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  background: #1a1d27;
   color: var(--text-h);
   font-size: 14px;
 }
@@ -147,8 +196,8 @@ body {
   font-size: 14px;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border: 1px solid #3a4054;
+  background: #1a1d27;
   color: var(--text-h);
   cursor: pointer;
 }
@@ -157,7 +206,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 3;
   margin: 0;
   padding: 2px 8px;
   border-radius: 999px;
@@ -171,18 +220,17 @@ body {
 }
 
 .terrain-science {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  z-index: 1;
+  position: static;
   box-sizing: border-box;
-  width: min(22rem, calc(100vw - 32px));
-  max-height: min(46svh, 24rem);
-  overflow: auto;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  margin: 0 0 16px;
+  padding: 0 0 16px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
   color: var(--text-h);
   font-size: 14px;
 }
@@ -306,20 +354,18 @@ body {
 }
 
 .terrain-compare {
-  position: absolute;
-  left: 16px;
-  right: 16px;
-  bottom: 72px;
-  z-index: 3;
+  position: static;
   box-sizing: border-box;
-  max-height: min(42svh, 22rem);
-  overflow: auto;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
   color: var(--text-h);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .terrain-compare-table {
@@ -349,31 +395,34 @@ body {
 }
 
 .terrain-note {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  z-index: 1;
+  position: static;
   margin: 0;
-  padding: 6px 10px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  background: #1a1d27;
   color: var(--text-h);
   font-size: 14px;
   pointer-events: none;
 }
 
 .terrain-readout {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  box-sizing: border-box;
+  width: min(22rem, calc(100% - 24px));
+  max-height: min(46%, 22rem);
   margin: 0;
   padding: 12px 14px;
-  max-width: min(34rem, calc(100vw - 32px));
   overflow: auto;
   text-align: left;
   color: var(--text-h);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  background: #1a1d27;
   border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.45;
 }
 

@@ -105,7 +105,7 @@ export function TerrainViewer() {
 
   return (
     <div className="terrain-viewer">
-      <div className="terrain-hud">
+      <header className="terrain-topbar">
         <div className="terrain-site-selector" role="group" aria-label="Landing sites">
           {sites.map((site) => (
             <button
@@ -141,62 +141,70 @@ export function TerrainViewer() {
             {compareOpen ? 'Hide compare' : 'Compare'}
           </button>
         </div>
-        <label className="terrain-exaggeration">
-          Vertical exaggeration (visual only)
-          <span className="terrain-exaggeration-row">
-            <input
-              type="range"
-              min={1}
-              max={8}
-              step={0.5}
-              value={exaggeration}
-              onChange={(event) => setExaggeration(Number(event.target.value))}
-            />
-            <span>{formatScale(exaggeration)}x</span>
-          </span>
-        </label>
-        {exaggeration > 1 && (
-          <p className="terrain-exaggeration-note">
-            Vertical exaggeration x{formatScale(exaggeration)} applied (visual only)
-          </p>
-        )}
-        {(infoOpen || error || heightError) && (
-          <aside className="terrain-readout">
-            <TerrainReadout
-              terrain={terrain}
-              height={height}
-              mesh={mesh}
-              error={error}
-              heightError={heightError}
-            />
-          </aside>
-        )}
-      </div>
-      {compareOpen && <SiteCompare sites={sites} selectedSiteId={selectedSiteId} />}
-      {selectedSite && <SiteScience site={selectedSite} hidden={compareOpen} />}
-      <p className="terrain-note">Hillshade: visual only, synthetic light (not the real Sun)</p>
-      {terrain && loadedSiteId && (
-        <div ref={siteLabelRef} className="terrain-site-label">
-          Site{loadedSiteId.slice(4)} landing point
+      </header>
+      <div className="terrain-body">
+        <div className="terrain-stage">
+          {terrain && loadedSiteId && (
+            <div ref={siteLabelRef} className="terrain-site-label">
+              Site{loadedSiteId.slice(4)} landing point
+            </div>
+          )}
+          <div className="terrain-corner">
+            <label className="terrain-exaggeration">
+              Vertical exaggeration (visual only)
+              <span className="terrain-exaggeration-row">
+                <input
+                  type="range"
+                  min={1}
+                  max={8}
+                  step={0.5}
+                  value={exaggeration}
+                  onChange={(event) => setExaggeration(Number(event.target.value))}
+                />
+                <span>{formatScale(exaggeration)}x</span>
+              </span>
+            </label>
+            {exaggeration > 1 && (
+              <p className="terrain-exaggeration-note">
+                Vertical exaggeration x{formatScale(exaggeration)} applied (visual only)
+              </p>
+            )}
+            <p className="terrain-note">Hillshade: visual only, synthetic light (not the real Sun)</p>
+          </div>
+          {(infoOpen || error || heightError) && (
+            <aside className="terrain-readout">
+              <TerrainReadout
+                terrain={terrain}
+                height={height}
+                mesh={mesh}
+                error={error}
+                heightError={heightError}
+              />
+            </aside>
+          )}
+          <Canvas camera={{ position: [0, 8000, 22000], fov: 45, near: 1, far: 400000 }}>
+            <color attach="background" args={['#0c0e14']} />
+            <ambientLight intensity={0.45} />
+            <directionalLight position={[4, 6, 3]} intensity={1.2} />
+            {mesh && (
+              <mesh geometry={mesh.geometry} scale={[1, exaggeration, 1]}>
+                <HillshadeMaterial texture={hillshade} />
+              </mesh>
+            )}
+            {terrain && <SiteMarker terrain={terrain} labelRef={siteLabelRef} exaggeration={exaggeration} />}
+            <mesh>
+              <boxGeometry args={[1.5, 1.5, 1.5]} />
+              <meshStandardMaterial color="#c084fc" />
+            </mesh>
+            <OrbitControls ref={controlsRef} />
+            <RememberView controlsRef={controlsRef} />
+          </Canvas>
         </div>
-      )}
-      <Canvas camera={{ position: [0, 8000, 22000], fov: 45, near: 1, far: 400000 }}>
-        <color attach="background" args={['#16171d']} />
-        <ambientLight intensity={0.45} />
-        <directionalLight position={[4, 6, 3]} intensity={1.2} />
-        {mesh && (
-          <mesh geometry={mesh.geometry} scale={[1, exaggeration, 1]}>
-            <HillshadeMaterial texture={hillshade} />
-          </mesh>
-        )}
-        {terrain && <SiteMarker terrain={terrain} labelRef={siteLabelRef} exaggeration={exaggeration} />}
-        <mesh>
-          <boxGeometry args={[1.5, 1.5, 1.5]} />
-          <meshStandardMaterial color="#c084fc" />
-        </mesh>
-        <OrbitControls ref={controlsRef} />
-        <RememberView controlsRef={controlsRef} />
-      </Canvas>
+        <aside className="terrain-side">
+          {selectedSite && <SiteScience site={selectedSite} />}
+          {compareOpen && <SiteCompare sites={sites} selectedSiteId={selectedSiteId} />}
+        </aside>
+      </div>
     </div>
   )
 }
