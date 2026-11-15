@@ -68,7 +68,16 @@ htmlcov/
 data/kernels/*.bsp
 data/kernels/*.bpc
 data/kernels/*.part
-frontend/public/data/
+frontend/public/data/*
+!frontend/public/data/manifest.json
+!frontend/public/data/sites.json
+!frontend/public/data/scenarios/
+
+frontend/public/data/scenarios/*
+!frontend/public/data/scenarios/monthly-2026-11/
+
+frontend/public/data/scenarios/monthly-2026-11/*
+!frontend/public/data/scenarios/monthly-2026-11/*.json
 
 # ==============================
 # Editor / Operating System

@@ -196,7 +196,7 @@ export function TerrainViewer() {
               <boxGeometry args={[1.5, 1.5, 1.5]} />
               <meshStandardMaterial color="#c084fc" />
             </mesh>
-            <OrbitControls ref={controlsRef} />
+            <OrbitControls ref={controlsRef as never} />
             <RememberView controlsRef={controlsRef} />
           </Canvas>
         </div>
